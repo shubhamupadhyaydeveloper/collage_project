@@ -1,32 +1,58 @@
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import { DefaultTheme, NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import Modal from '../screens/modal';
-import DrawerNavigator from './drawer-navigator';
+import DrawerNavigator from './drawer';
+import { ScrollContextProvider } from 'context/scrollContext';
+import { RootStackNavigationType } from 'utils/types';
+import AuthStackNavigation from './auth';
+import SplashScreen from 'screens/splash';
+import { navigationRef } from 'utils/navigation';
 
-export type RootStackParamList = {
-  DrawerNavigator: undefined;
-  Modal: undefined;
-  TabNavigator: undefined;
-};
 
-const Stack = createStackNavigator<RootStackParamList>();
+const Stack = createNativeStackNavigator<RootStackNavigationType>();
 
 export default function RootStack() {
+  const myTheme = {
+    ...DefaultTheme,
+    colors: {
+      ...DefaultTheme.colors,
+      background: 'black',
+
+    },
+  };
+
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="DrawerNavigator">
-        <Stack.Screen
-          name="DrawerNavigator"
-          component={DrawerNavigator}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="Modal"
-          component={Modal}
-          options={{ presentation: 'modal', headerLeft: () => null }}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <ScrollContextProvider>
+      <NavigationContainer ref={navigationRef} theme={myTheme}>
+        <Stack.Navigator screenOptions={{
+          headerShown: false,
+          contentStyle: {
+            backgroundColor: 'black'
+          }
+        }}
+          initialRouteName="Splash"
+
+        >
+          <Stack.Screen
+            name="App"
+            component={DrawerNavigator}
+            options={{ headerShown: false }}
+          />
+
+          <Stack.Screen
+            name='Auth'
+            component={AuthStackNavigation}
+            options={{ headerShown: false }}
+          />
+
+          <Stack.Screen
+            name='Splash'
+            component={SplashScreen}
+            options={{ headerShown: false }}
+          />
+
+        </Stack.Navigator>
+      </NavigationContainer>
+    </ScrollContextProvider>
   );
 }
