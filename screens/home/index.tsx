@@ -1,5 +1,5 @@
 import { FlatList, Image, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import React, { useEffect, useMemo } from 'react';
+import React, { JSX, use, useEffect, useMemo } from 'react';
 import Animated, {
   Extrapolation,
   interpolate,
@@ -38,16 +38,52 @@ const mockData = [
   }
 ];
 
+const QuickActionButton = ({ label, icon }: { label: string; icon: JSX.Element }) => (
+  <TouchableOpacity
+    style={{
+      backgroundColor: '#1F2937',
+      paddingVertical: 10,
+      paddingHorizontal: 15,
+      borderRadius: 12,
+      marginRight: 10,
+      flexDirection: 'row',
+      alignItems: 'center',
+    }}
+  >
+    {icon}
+    <Text style={{ color: '#fff', marginLeft: 8, fontFamily: 'Nunito-Medium' }}>{label}</Text>
+  </TouchableOpacity>
+);
+
+const QuickActions = () => (
+  <View style={{ marginBottom: 30 }}>
+    <Text style={styles.sectionTitle}>Quick Actions</Text>
+    <FlatList
+      horizontal
+      data={[
+        { label: 'Create Quiz', icon: <Octicons name="diff-added" size={18} color="#fff" /> },
+        { label: 'Upload PDF', icon: <Octicons name="file" size={18} color="#fff" /> },
+        { label: 'Scan Notes', icon: <Octicons name="device-camera" size={18} color="#fff" /> },
+        { label: 'Manual Input', icon: <Octicons name="pencil" size={18} color="#fff" /> },
+      ]}
+      keyExtractor={(item) => item.label}
+      showsHorizontalScrollIndicator={false}
+      contentContainerStyle={{ paddingVertical: 10 }}
+      renderItem={({ item }) => <QuickActionButton label={item.label} icon={item.icon} />}
+    />
+  </View>
+);
+
 const CommonHeader = () => {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
 
   return (
-    <View style={{ paddingTop: insets.top + 20, marginBottom: verticalScale(20), paddingHorizontal: 15 }}>
+    <View style={{ paddingTop: insets.top + 10, marginBottom: verticalScale(40) }}>
       <View style={styles.headerContainer}>
         <View>
           <Text style={styles.logoText}>Quizkr</Text>
-          <Text style={styles.tagline}>Smarter Learning with AI</Text>
+          <Text style={styles.tagline}>Smarter Learning Through Quizzes</Text>
         </View>
         <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
           <Octicons name="three-bars" size={24} color="#fff" />
@@ -60,6 +96,7 @@ const CommonHeader = () => {
 const HomeScreen = () => {
   const topScrollValue = useSharedValue(0);
   const { scrollY } = useScrollContext();
+  const insets = useSafeAreaInsets();
 
   const onScrollHandler = useAnimatedScrollHandler({
     onScroll: (event) => {
@@ -111,6 +148,7 @@ const HomeScreen = () => {
       <Animated.FlatList
         onScroll={onScrollHandler}
         showsVerticalScrollIndicator={false}
+        
         keyExtractor={(item, index) => index.toString()}
         data={mockData}
         renderItem={({ item, index }) => (
@@ -122,11 +160,19 @@ const HomeScreen = () => {
           />
         )}
         ItemSeparatorComponent={() => <View style={{ height: 20 }} />}
-        ListHeaderComponent={<CommonHeader />}
+        ListHeaderComponent={() => (
+          <View>
+            <CommonHeader />
+            <QuickActions />
+          </View>
+        )}
         ListFooterComponent={() => (
-          <View style={styles.footerContainer}>
-            <Text style={styles.footerMain}>Ace Every Exam</Text>
-            <Text style={styles.footerSub}>Crafted quizzes. Smarter prep.</Text>
+          <View style={{ marginBottom: verticalScale(110), marginTop: verticalScale(30) }} >
+            <View style={{ gap: -5 }}>
+              <Text style={{ fontSize: 28, color: 'white', fontFamily: 'Bungee-Regular', lineHeight: 28 }}>One Solution</Text>
+              <Text style={{ fontSize: 28, color: 'white', fontFamily: 'Bungee-Regular', lineHeight: 30 }}>for Every Exams </Text>
+              <Text style={{ fontSize: 28, color: 'white', fontFamily: 'Bungee-Regular', lineHeight: 30 }}>Quizkr <Text style={{ fontSize: 24 }}>❤️</Text>  </Text>
+            </View>
           </View>
         )}
         contentContainerStyle={{ paddingHorizontal: 15, paddingTop: verticalScale(10) }}
@@ -162,7 +208,8 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
   logoText: {
-    fontSize: 34,
+    fontSize: 24,
+    lineHeight: 28,
     fontFamily: 'Bungee-Regular',
     color: '#FFFFFF',
   },
@@ -180,7 +227,6 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: '#A0AEC0',
     fontFamily: 'Nunito-Medium',
-    marginTop: 2,
   },
   footerContainer: {
     marginBottom: verticalScale(100),
@@ -197,5 +243,17 @@ const styles = StyleSheet.create({
     color: '#A0AEC0',
     fontFamily: 'Nunito-Medium',
     marginTop: 4,
-  }
+  },
+  sectionTitle: {
+    color: '#fff',
+    fontSize: 14,
+    fontFamily: 'Nunito-Medium',
+    lineHeight: 20,
+  },
+  sectionDesc: {
+    color: '#A0AEC0',
+    fontSize: 14,
+    fontFamily: 'Nunito-Medium',
+    lineHeight: 20,
+  },
 });

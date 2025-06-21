@@ -45,9 +45,9 @@ export default function TabLayout() {
                 tabBarInactiveTintColor: '#ffffff',
                 tabBarActiveTintColor: '#16C47F',
                 tabBarStyle: {
-                    height: iosDevice ? verticalScale(80) : verticalScale(95),
+                    // height: iosDevice ? verticalScale(80) : verticalScale(95),
                     backgroundColor: Colors.lightText,
-                    paddingTop: verticalScale(15),
+                    paddingTop: verticalScale(10),
                     borderColor: "#dadada",
                     borderTopWidth: 0,
                     shadowColor: "#000",
@@ -55,7 +55,6 @@ export default function TabLayout() {
                     shadowOpacity: 0.25,
                     shadowRadius: 4,
                     elevation: 5,
-                    paddingBottom: verticalScale(5),
                 },
                 tabBarLabelStyle: {
                     fontSize: 10,

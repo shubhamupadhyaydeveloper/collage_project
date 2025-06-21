@@ -1,11 +1,22 @@
-import React, { useContext } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native';
+import React, { useContext, useEffect, useState } from 'react';
+import { StyleSheet, Text, TouchableOpacity, View, Image ,Linking} from 'react-native';
 import { DrawerContentScrollView, DrawerContentComponentProps } from '@react-navigation/drawer';
-import { useNavigation } from '@react-navigation/native';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { account } from 'utils/appwrite';
+import { Models } from 'appwrite';
+import { BottomTabNavigationType } from 'utils/types';
 // import { AuthContext } from 'context/AuthProvider'; // If using context for logout
 
 const DrawerContent = (props: DrawerContentComponentProps) => {
-  const navigation = useNavigation();
+  // const navigation = useNavigation<NavigationProp<BottomTabNavigationType>>();
+  const [accountDetail, setAccountDetail] = useState<Models.User<Models.Preferences> | null>(null);
+
+  useEffect(() => {
+    (async () => {
+      const user = await account.get();
+      setAccountDetail(user);
+    })();
+  }, []);
 
   const handleLogout = () => {
     // context.logout(); OR clear token/session
@@ -20,22 +31,24 @@ const DrawerContent = (props: DrawerContentComponentProps) => {
       <View style={styles.header}>
         <Image
           source={{
-            uri: 'https://ui-avatars.com/api/?name=Shubham+Upadhyay&background=6C47FF&color=fff',
+            uri: `https://ui-avatars.com/api/?name=${accountDetail?.name}&background=6C47FF&color=fff`,
           }}
           style={styles.avatar}
         />
-        <Text style={styles.name}>Shubham Upadhyay</Text>
-        <Text style={styles.email}>shubham@example.com</Text>
+
+        <Text style={styles.name}>{accountDetail?.name}</Text>
+        <Text style={styles.email}>{accountDetail?.email}</Text>
       </View>
 
       <View style={styles.links}>
-        <DrawerLink label="Profile" onPress={() => {}} />
-        <DrawerLink label="Saved History" onPress={() => {}} />
-        <DrawerLink label="Meet Developers" onPress={() => {}} />
-      </View>
-
-      <View style={styles.footer}>
-        <DrawerLink label="Logout" onPress={handleLogout} danger />
+        <DrawerLink label="Profile" onPress={() => {
+           props.navigation.navigate('Tabs',{
+             screen : 'Profile'
+           });
+        }} />
+        <DrawerLink label="Meet Developers" onPress={() => {
+          Linking.openURL('https://www.linkedin.com/in/shubhamupadhyaydeveloper/')
+         }} />
       </View>
     </DrawerContentScrollView>
   );

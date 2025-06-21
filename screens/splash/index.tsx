@@ -2,7 +2,7 @@ import { Button, Image, StyleSheet, Text, View } from 'react-native';
 import React, { useEffect } from 'react'
 import { CommonActions, NavigationProp, useNavigation } from '@react-navigation/native';
 import { AuthStackNavigationType, RootStackNavigationType } from '../../utils/types';
-import { splashImage } from '../../utils/constants';
+// import { splashImage } from '../../utils/constants';
 import { account } from 'utils/appwrite';
 // import { mmkvStorage } from 'utils/mmkvstore';
 
@@ -55,7 +55,7 @@ const SplashScreen = () => {
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
       <View>
-        <Image source={splashImage} style={{ width: 300, height: 300 }} />
+        {/* <Image source={{uri : ''}} style={{ width: 300, height: 300 }} /> */}
         <Text style={{ color: 'white', fontSize: 24, fontWeight: "bold", textAlign: 'center' }}>Quizkr</Text>
       </View>
     </View>
