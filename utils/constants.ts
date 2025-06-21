@@ -36,4 +36,4 @@ export const formatDate = (dateString: string): string => {
 export const loginImage = require('../assets/png/login.png')
 export const signupImage = require('../assets/png/signup.png')
 export const googleIconImage = require('../assets/png/google.png')
-// export const splashImage = require('../assets/png/splash.png')
+export const playstoreImage = require('../assets/png/playstore.png')
