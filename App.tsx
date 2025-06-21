@@ -1,9 +1,20 @@
 import 'react-native-gesture-handler';
 import { useFonts } from 'expo-font'
-
+import * as SplashScreen from 'expo-splash-screen';
 import RootStack from './navigation';
+import { useEffect } from 'react';
+
+SplashScreen.preventAutoHideAsync();
 
 export default function App() {
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      SplashScreen.hideAsync();
+    }, 10);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   const [fontsLoaded] = useFonts({
     'Poppins-Regular': require('./assets/fonts/Poppins-Regular.ttf'),
     'Poppins-Medium': require('./assets/fonts/Poppins-Medium.ttf'),
