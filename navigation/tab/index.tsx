@@ -16,6 +16,7 @@ import BrainIcon from '../../assets/raw-svg/brain.svg'
 import SavedIcon from '../../assets/raw-svg/star.svg'
 import HomeFillIcon from '../../assets/raw-svg/home.svg'
 import { Pressable } from 'react-native';
+import ProfileStack from 'screens/profileHome';
 
 export default function TabLayout() {
     function CustomTabBarButton({ children, onPress, onLayout }: BottomTabBarButtonProps) {
@@ -91,7 +92,7 @@ export default function TabLayout() {
             />
             <Tab.Screen
                 name='Profile'
-                component={ProfilePage}
+                component={ProfileStack}
                 options={{
                     headerShown: false,
                     tabBarButton: (props) => (

@@ -6,11 +6,16 @@ export type GenerateNavigationType = {
   ResultPage : {score : number, totalQuestions:number};
 };
 
+export type ProfileNavigationType = {
+  Profile : undefined;
+  ForgetPassword : undefined
+}
+
 
 export type BottomTabNavigationType = {
   Home: undefined,
   Generate: NavigatorScreenParams<GenerateNavigationType>,
-  Profile: undefined,
+  Profile: NavigatorScreenParams<ProfileNavigationType>,
 }
 
 export type RootStackNavigationType = {

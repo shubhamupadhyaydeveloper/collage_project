@@ -1,19 +1,17 @@
 import 'react-native-gesture-handler';
 import { useFonts } from 'expo-font'
-import * as SplashScreen from 'expo-splash-screen';
 import RootStack from './navigation';
 import { useEffect } from 'react';
-
-SplashScreen.preventAutoHideAsync();
+import * as NavigationBar from 'expo-navigation-bar';
+import {Platform} from 'react-native'
 
 export default function App() {
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      SplashScreen.hideAsync();
-    }, 10);
 
-    return () => clearTimeout(timer);
-  }, []);
+  useEffect(() => {
+    if (Platform.OS === 'android') {
+      NavigationBar.setBackgroundColorAsync('#222');
+    }
+  },[])
 
   const [fontsLoaded] = useFonts({
     'Poppins-Regular': require('./assets/fonts/Poppins-Regular.ttf'),

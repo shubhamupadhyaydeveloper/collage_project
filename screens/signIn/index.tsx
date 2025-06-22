@@ -12,8 +12,7 @@ import { Colors, loginImage } from '../../utils/constants';
 import CustomInput from '../../components/CustomTextInput';
 import { Button } from 'components/Button';
 import { account } from 'utils/appwrite';
-
-
+import { toast } from 'burnt'
 
 const AuthLoginScreen = () => {
     const navigation = useNavigation<NavigationProp<AuthStackNavigationType, 'Login'>>();
@@ -25,7 +24,7 @@ const AuthLoginScreen = () => {
     const onSubmit = async (value: FieldValues) => {
         try {
             console.log('this is value', value);
-            
+
             const session = await account.createEmailPasswordSession(value.email, value.password);
 
             navigation.dispatch(
@@ -34,11 +33,23 @@ const AuthLoginScreen = () => {
                     routes: [{ name: 'App' }],
                 })
             );
+
         } catch (err: any) {
             if (err.message.includes('Rate limit')) {
-                Alert.alert('Too many requests', 'Please wait a few minutes and try again.');
+                toast({
+                    message: 'Rate limit exceeded, please wait for 1 minute and try again.',
+                    title: 'Rate limit exceeded, please wait for 1 minute and try again.',
+                    preset: 'error',
+                    
+                })
             } else {
-                Alert.alert('Login Failed', err.message ?? 'Something went wrong');
+                toast({
+                    message: err.message ?? 'Something went wrong',
+                    title: err.message ?? 'Something went wrong',
+                    preset: 'error',
+                    haptic: 'error',
+                })
+                // Alert.alert('Login Failed', err.message ?? 'Something went wrong');
             }
         }
 

@@ -35,13 +35,18 @@ const GoogleGiminiScreen = () => {
     }
 
     const handleValuesChange = (item: FilterValuesTypes) => {
-
+        console.log('this is values', item)
+        setValues({
+            difficulty: item.difficulty,
+            noOfQuestions: item.noOfQuestions,
+            type: item.type
+        })
     }
 
     return (
         <SafeAreaView style={{ paddingHorizontal: 10, gap: 10, flex: 1, paddingTop: 20 }}>
-            <Filters defaultValues={values} onValueChange={setValues} />
-            <RenderActiveComponent />
+            <Filters defaultValues={values} onValueChange={handleValuesChange} />
+             {RenderActiveComponent()}
         </SafeAreaView>
     )
 }

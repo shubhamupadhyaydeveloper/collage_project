@@ -25,6 +25,7 @@ import MaterialIcon from 'react-native-vector-icons/MaterialIcons'
 import Modal from 'react-native-modal'
 import { jsonrepair } from "jsonrepair";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { toast } from 'burnt';
 
 
 
@@ -85,13 +86,19 @@ const QuizWithText = () => {
           if (Array.isArray(actualData) && actualData.length > 0) {
             navigation.navigate('QuizPage', { data: actualData });
           } else {
-            Alert.alert("Invalid Content", "Unable to generate meaningful quiz questions. Try providing a clearer context.");
+            toast({
+              title: 'Unable to generate meaningful quiz questions. Try providing a clearer context.'
+            })
           }
         } catch (error) {
-          Alert.alert("Invalid Response", "The AI could not generate valid quiz questions. Try again with a better input.");
+          toast({
+            title: 'The AI could not generate valid quiz questions. Try again with a better input.'
+          })
         }
       } else {
-        Alert.alert("Context too short", "Unable to generate questions, please provide a longer context.");
+        toast({
+          title: 'Unable to generate questions, please provide a longer context.'
+        })
       }
     } catch (error) {
       console.error('Error in handleSubmit', error);

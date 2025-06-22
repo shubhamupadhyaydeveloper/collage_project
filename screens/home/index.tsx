@@ -1,5 +1,5 @@
 import { FlatList, Image, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import React, { JSX, use, useEffect, useMemo } from 'react';
+import React, { JSX, use, useEffect, useMemo, useState } from 'react';
 import Animated, {
   Extrapolation,
   interpolate,
@@ -14,6 +14,9 @@ import { DrawerActions, useNavigation } from '@react-navigation/native';
 import { useScrollContext } from 'context/scrollContext';
 import { horizontalScale, verticalScale } from '../../utils/responsive';
 import Octicons from 'react-native-vector-icons/Octicons';
+import FeatherIcon from 'react-native-vector-icons/Feather'
+import { Models } from 'appwrite';
+import { account } from 'utils/appwrite';
 
 const mockData = [
   {
@@ -41,17 +44,20 @@ const mockData = [
 const QuickActionButton = ({ label, icon }: { label: string; icon: JSX.Element }) => (
   <TouchableOpacity
     style={{
-      backgroundColor: '#1F2937',
+      backgroundColor: '#1A1A1A',
+      borderRadius: 12,
+      borderWidth: 1,
+      borderColor: '#333',
       paddingVertical: 10,
       paddingHorizontal: 15,
-      borderRadius: 12,
+
       marginRight: 10,
       flexDirection: 'row',
       alignItems: 'center',
     }}
   >
     {icon}
-    <Text style={{ color: '#fff', marginLeft: 8, fontFamily: 'Nunito-Medium' }}>{label}</Text>
+    <Text style={{ color: '#999', marginLeft: 8, fontFamily: 'Nunito-Medium' }}>{label}</Text>
   </TouchableOpacity>
 );
 
@@ -74,7 +80,7 @@ const QuickActions = () => (
   </View>
 );
 
-const CommonHeader = () => {
+const CommonHeader = ({ userDetail }: { userDetail: Models.User<Models.Preferences> }) => {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
 
@@ -82,11 +88,13 @@ const CommonHeader = () => {
     <View style={{ paddingTop: insets.top + 10, marginBottom: verticalScale(40) }}>
       <View style={styles.headerContainer}>
         <View>
-          <Text style={styles.logoText}>Quizkr</Text>
-          <Text style={styles.tagline}>Smarter Learning Through Quizzes</Text>
+          {/* <Text style={styles.logoText}>Quizkr</Text> */}
+          <Text style={styles.tagline}>Welcome {userDetail?.name} 👋🏻</Text>
         </View>
         <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
-          <Octicons name="three-bars" size={24} color="#fff" />
+          <View style={{ padding: 8, backgroundColor: '#fff', borderRadius: 50 }}>
+            <FeatherIcon name="user" size={24} color="#000" />
+          </View>
         </TouchableOpacity>
       </View>
     </View>
@@ -97,6 +105,15 @@ const HomeScreen = () => {
   const topScrollValue = useSharedValue(0);
   const { scrollY } = useScrollContext();
   const insets = useSafeAreaInsets();
+  const [accountDetail, setAccountDetail] = useState<Models.User<Models.Preferences> | null>(null);
+
+  useEffect(() => {
+    (async () => {
+      const user = await account.get();
+      setAccountDetail(user);
+    })();
+  }, []);
+
 
   const onScrollHandler = useAnimatedScrollHandler({
     onScroll: (event) => {
@@ -130,7 +147,7 @@ const HomeScreen = () => {
 
         return (
           <Animated.View
-            style={[styles.boxContainer, renderBoxAnimatedStyle, { backgroundColor: bg }]}
+            style={[styles.boxContainer, renderBoxAnimatedStyle,]}
           >
             <View>
               <Text style={styles.boxTitle}>{text}</Text>
@@ -148,7 +165,7 @@ const HomeScreen = () => {
       <Animated.FlatList
         onScroll={onScrollHandler}
         showsVerticalScrollIndicator={false}
-        
+
         keyExtractor={(item, index) => index.toString()}
         data={mockData}
         renderItem={({ item, index }) => (
@@ -162,16 +179,18 @@ const HomeScreen = () => {
         ItemSeparatorComponent={() => <View style={{ height: 20 }} />}
         ListHeaderComponent={() => (
           <View>
-            <CommonHeader />
+            {accountDetail && <CommonHeader userDetail={accountDetail} />}
             <QuickActions />
+            <View style={{ marginBottom: 5 }}>
+              <Text style={{ color: 'white', fontSize: 18, fontFamily: 'Poppins-Regular' }}>features we have</Text>
+            </View>
           </View>
         )}
         ListFooterComponent={() => (
           <View style={{ marginBottom: verticalScale(110), marginTop: verticalScale(30) }} >
-            <View style={{ gap: -5 }}>
-              <Text style={{ fontSize: 28, color: 'white', fontFamily: 'Bungee-Regular', lineHeight: 28 }}>One Solution</Text>
-              <Text style={{ fontSize: 28, color: 'white', fontFamily: 'Bungee-Regular', lineHeight: 30 }}>for Every Exams </Text>
-              <Text style={{ fontSize: 28, color: 'white', fontFamily: 'Bungee-Regular', lineHeight: 30 }}>Quizkr <Text style={{ fontSize: 24 }}>❤️</Text>  </Text>
+            <View style={styles.container}>
+              <Text style={styles.logoText}>Quizkr</Text>
+              <Text style={styles.slogan}>Spark Curiosity. Master Knowledge.</Text>
             </View>
           </View>
         )}
@@ -184,8 +203,29 @@ const HomeScreen = () => {
 export default HomeScreen;
 
 const styles = StyleSheet.create({
+  container: {
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  brand: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    color: '#0D9276',
+    fontFamily: 'Bungee-Regular',
+  },
+  slogan: {
+    fontSize: 16,
+    color: '#aaa',
+    marginTop: 4,
+    fontStyle: 'italic',
+    textAlign: 'center',
+    fontFamily: 'Nunito-Regular',
+  },
   boxContainer: {
-    borderRadius: 16,
+    backgroundColor: '#1A1A1A',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#333',
     padding: 20,
     elevation: 4,
     shadowColor: '#000',
@@ -201,7 +241,7 @@ const styles = StyleSheet.create({
     lineHeight: 26,
   },
   boxDescription: {
-    color: '#A0AEC0',
+    color: '#999999',
     fontSize: 14,
     fontFamily: 'Nunito-Medium',
     marginTop: 10,
@@ -224,8 +264,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   tagline: {
-    fontSize: 15,
-    color: '#A0AEC0',
+    fontSize: 18,
+    color: '#999',
     fontFamily: 'Nunito-Medium',
   },
   footerContainer: {
@@ -246,8 +286,8 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     color: '#fff',
-    fontSize: 14,
-    fontFamily: 'Nunito-Medium',
+    fontSize: 18,
+    fontFamily: 'Poppins-Medium',
     lineHeight: 20,
   },
   sectionDesc: {
