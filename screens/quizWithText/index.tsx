@@ -28,22 +28,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { toast } from 'burnt';
 import BottomSheet from '@gorhom/bottom-sheet';
 import GorhomModal from 'components/GorhomModal';
+import { generateQuizes } from 'utils/generateQuiz';
 
-
-const apiKey = 'AIzaSyBtMByO1hrHxfA6KIZF-RTMkquFCqZhqqA';
-const gemini = new GoogleGenerativeAI(apiKey)
-
-async function getGeminiResponse(prompt: string) {
-  try {
-    const model = gemini.getGenerativeModel({ model: 'gemini-1.5-flash' })
-    const result = await model.generateContent(prompt)
-    const response = result.response.text()
-    return response
-  } catch (error: any) {
-    console.error('Gemini Api error', error)
-    return 'Error fetching response'
-  }
-}
 
 const QuizWithText = () => {
   const [input, setInput] = useState('');
@@ -71,34 +57,17 @@ const QuizWithText = () => {
   }
 
   const handleSubmit = async () => {
+    if (input.length < 100) {
+      toast({
+        title: 'Unable to generate questions, please provide a longer context.'
+      })
+      return
+    }
     try {
-      if (input.length > 100) {
-        setIsLoading(true);
-        const result = await getGeminiResponse(
-          input +
-          ' Generate a quiz based on the above text. The response should ONLY be a JSON array containing objects with the fields: "question" (string), "options" (array of 4 strings), and "answer" (string). Do NOT include any extra text, explanation, or code block syntax like ```.'
-        );
-
-        try {
-          const parsedResult = jsonrepair(result);
-          const actualData = JSON.parse(parsedResult)
-
-          if (Array.isArray(actualData) && actualData.length > 0) {
-            navigation.navigate('QuizPage', { data: actualData });
-          } else {
-            toast({
-              title: 'Unable to generate meaningful quiz questions. Try providing a clearer context.'
-            })
-          }
-        } catch (error) {
-          toast({
-            title: 'The AI could not generate valid quiz questions. Try again with a better input.'
-          })
-        }
-      } else {
-        toast({
-          title: 'Unable to generate questions, please provide a longer context.'
-        })
+      setIsLoading(true);
+      const result = await generateQuizes({ input })
+      if (result) {
+        navigation.navigate('QuizPage', { data: result });
       }
     } catch (error) {
       console.error('Error in handleSubmit', error);
@@ -149,9 +118,6 @@ const QuizWithText = () => {
               <Text style={{ color: 'white', fontWeight: 'bold', fontFamily: 'Nunito-Bold' }}>Quiz</Text>
             </TouchableOpacity>
           </View>
-
-
-       
 
           <Modal
             isVisible={isLoading}

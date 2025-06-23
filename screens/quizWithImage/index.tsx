@@ -1,7 +1,7 @@
-import { Alert, Button, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View, PermissionsAndroid, Platform, Linking } from 'react-native'
+import { Alert, Button, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View, PermissionsAndroid, Platform, Linking, ActivityIndicator } from 'react-native'
 import React, { useState } from 'react'
 import { CameraPermissionResponse, CameraType, launchCameraAsync, launchImageLibraryAsync, MediaTypeOptions } from 'expo-image-picker'
-import TextRecognition from '@react-native-ml-kit/text-recognition';
+
 import Modal from 'react-native-modal'
 import { horizontalScale, verticalScale } from '../../utils/responsive';
 import AntDesignIcon from 'react-native-vector-icons/AntDesign'
@@ -10,12 +10,21 @@ import * as Clipboard from 'expo-clipboard';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons'
 import IcoIcons from 'react-native-vector-icons/Ionicons'
 import { moderateScale } from 'react-native-size-matters';
+import axios from 'axios';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { GenerateNavigationType } from 'utils/types';
+import { toast } from 'burnt';
+import { generateQuizes } from 'utils/generateQuiz';
+import LottieView from 'lottie-react-native';
 
 const QuizWithImage = () => {
   const [cameraImage, setCameraImage] = useState<any>('')
   const [processedText, setProcessedText] = useState<string | null>('')
   const [modalVisible, setModalVisible] = useState(false)
   const [textCopy, setTextCopy] = useState(false)
+  const [extractTextLoading, setExtractTextLoading] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const navigation = useNavigation<NavigationProp<GenerateNavigationType>>()
 
   const requestCameraPermission = async () => {
     if (Platform.OS === 'android') {
@@ -33,11 +42,33 @@ const QuizWithImage = () => {
     return true;
   };
 
-  const handleExtractText = async (imageUrl: string) => {
-    console.log('this is working')
-    const result = await TextRecognition.recognize(imageUrl);
-    setProcessedText(result.text)
-    setModalVisible(true)
+  const handleExtractText = async ({ imageUrl, showModal }: { imageUrl: string, showModal: boolean }) => {
+    setExtractTextLoading(true)
+    try {
+      const formData = new FormData()
+      formData.append('file', {
+        uri: imageUrl,
+        name: 'image.jpg',
+        type: 'image/jpeg',
+      } as any);
+
+      const textData = await axios.post('https://quizkrbackend.onrender.com/user/ocr', formData, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      })
+      setProcessedText(textData.data.data)
+      if (showModal) {
+        setModalVisible(true)
+      }
+
+      return textData.data.data
+    } catch (error) {
+      console.log('error', error)
+    } finally {
+      setExtractTextLoading(false)
+    }
   }
 
   const handleTakeImage = async () => {
@@ -104,13 +135,52 @@ const QuizWithImage = () => {
     }
   }
 
+  const handleGenerateQuiz = async () => {
+    setLoading(true)
+    try {
+      if (!cameraImage) {
+        toast({
+          title: "Please select an image"
+        })
+        return;
+      }
+      if (processedText) {
+        if (processedText.length < 50) {
+          toast({
+            title: 'Unable to generate questions, please provide a longer context.'
+          })
+          return
+        }
+        const result = await generateQuizes({ input: processedText })
+        if (result) {
+          navigation.navigate('QuizPage', { data: result });
+        }
+      } else {
+        const text = await handleExtractText({ imageUrl: cameraImage, showModal: false })
+        const result = await generateQuizes({ input: text })
+        if (result) {
+          navigation.navigate('QuizPage', { data: result });
+        }
+      }
+    } catch (error: any) {
+      toast({
+        title: error
+      })
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return (
     <View style={{ flex: 1 }}>
       <View style={{ marginTop: 20, justifyContent: 'center', alignItems: "center", marginBottom: 20 }}>
         {cameraImage ? (
           <View style={{ position: 'relative' }}>
             <TouchableOpacity
-              onPress={() => setCameraImage('')}
+              onPress={() => {
+                setCameraImage('')
+                setProcessedText('')
+              }}
               style={[styles.container, {
                 backgroundColor: 'red',
                 flexDirection: 'row',
@@ -167,9 +237,16 @@ const QuizWithImage = () => {
         )}
 
         {cameraImage && (
-          <TouchableOpacity activeOpacity={.8} onPress={() => handleExtractText(cameraImage)} style={[styles.secondaryButton,{paddingHorizontal : 40}]} >
-            <Text style={{ textAlign: 'center', fontSize: 12, lineHeight: 14, fontFamily: 'Bungee-Regular', color: 'white' }}>Get Text</Text>
-          </TouchableOpacity>
+          <View style={{ paddingHorizontal: 20 }}>
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={() => handleExtractText({ imageUrl: cameraImage, showModal: true })}
+              style={[styles.secondaryButton, {}]}
+            >
+              {extractTextLoading ? <ActivityIndicator size={'small'} color={'white'} /> : <Text style={{ color: 'white', fontFamily: 'Nunito-Bold', fontSize: 16 }}>Get Text</Text>}
+            </TouchableOpacity>
+          </View>
+
         )}
       </View>
 
@@ -179,7 +256,7 @@ const QuizWithImage = () => {
         <View style={{ justifyContent: 'space-between', flexDirection: 'row' }}>
           <View />
           <View style={[styles.buttonContainer]}>
-            <TouchableOpacity style={styles.quizButton}>
+            <TouchableOpacity onPress={handleGenerateQuiz} style={styles.quizButton}>
               <MaterialIcon name='timer' color={'white'} size={22} />
               <Text style={{ color: 'white', fontWeight: 'bold' }}>Quiz</Text>
             </TouchableOpacity>
@@ -226,6 +303,33 @@ const QuizWithImage = () => {
           </View>
         </View>
       </Modal>
+
+
+      <Modal
+        isVisible={loading}
+        backdropOpacity={1}
+        animationIn={'fadeIn'}
+        animationOut={'fadeOut'}
+        style={{
+           backgroundColor : 'black',
+           flex : 1,
+           padding : 0,
+           margin : 0,
+           width : "100%"
+        }}
+      >
+        <View style={styles.modalContainer}
+        >
+          <LottieView
+            speed={1.7}
+            source={require('../../assets/gif/loader.json')}
+            autoPlay
+            loop
+            style={{ width: 400, height: 400 }}
+          />
+        </View>
+      </Modal>
+
     </View>
   )
 }
@@ -284,5 +388,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     textAlign: 'center'
-  }
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 })
