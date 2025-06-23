@@ -45,6 +45,9 @@ const GoogleGiminiScreen = () => {
 
     return (
         <SafeAreaView style={{ paddingHorizontal: 10, gap: 10, flex: 1, paddingTop: 20 }}>
+            <View style={{paddingHorizontal : 20,marginBottom : 10}}>
+                <Text style={{ color: 'white', fontSize: 20, fontFamily: 'Nunito-Bold',lineHeight : 20 }}>Generate Quiz</Text>
+            </View>
             <Filters defaultValues={values} onValueChange={handleValuesChange} />
              {RenderActiveComponent()}
         </SafeAreaView>

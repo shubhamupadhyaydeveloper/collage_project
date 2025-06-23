@@ -28,7 +28,8 @@ export default function RootStack() {
           headerShown: false,
           contentStyle: {
             backgroundColor: 'black'
-          }
+          },
+          animation: 'ios_from_right'
         }}
           initialRouteName="Splash"
 

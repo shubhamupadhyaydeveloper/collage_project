@@ -3,7 +3,9 @@ import { useFonts } from 'expo-font'
 import RootStack from './navigation';
 import { useEffect } from 'react';
 import * as NavigationBar from 'expo-navigation-bar';
-import {Platform} from 'react-native'
+import { Platform } from 'react-native'
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 
 export default function App() {
 
@@ -11,7 +13,7 @@ export default function App() {
     if (Platform.OS === 'android') {
       NavigationBar.setBackgroundColorAsync('#222');
     }
-  },[])
+  }, [])
 
   const [fontsLoaded] = useFonts({
     'Poppins-Regular': require('./assets/fonts/Poppins-Regular.ttf'),
@@ -24,5 +26,11 @@ export default function App() {
   })
 
   if (!fontsLoaded) return null;
-  return <RootStack />;
+  return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <BottomSheetModalProvider>
+        <RootStack />
+      </BottomSheetModalProvider>
+    </GestureHandlerRootView>
+  );
 }

@@ -20,7 +20,7 @@ type DataType = {
 }
 
 const QuizPageScreen = () => {
-    const navigation = useNavigation<NavigationProp<GenerateNavigationType,'QuizPage'>>()
+    const navigation = useNavigation<NavigationProp<GenerateNavigationType, 'QuizPage'>>()
     const route = useRoute<RouteProp<GenerateNavigationType, 'QuizPage'>>();
     const { data } = route.params;
     const [currentQuizIndex, setCurrentQuizIndex] = useState(0);
@@ -28,8 +28,8 @@ const QuizPageScreen = () => {
     const insets = useSafeAreaInsets()
     const [showResult, setShowResult] = useState(false)
     const [activeIndex, setActiveIndex] = useState<number | null>(null)
-    const [totalScored,setTotalScored] = useState(0)
-     const [selectedAnswers, setSelectedAnswers] = useState<{[key: number]: number | null}>({});
+    const [totalScored, setTotalScored] = useState(0)
+    const [selectedAnswers, setSelectedAnswers] = useState<{ [key: number]: number | null }>({});
 
     const QuizProgressBar = ({ currentQuizIndex, totalQuiz }: { currentQuizIndex: number, totalQuiz: number }) => {
         return (
@@ -39,19 +39,20 @@ const QuizPageScreen = () => {
         );
     };
 
-      useEffect(() => {
+    useEffect(() => {
         if (showResult) {
             let newScore = 0;
             Object.keys(selectedAnswers).forEach(questionIndex => {
                 const index = Number(questionIndex);
-                const selectedOption = quiz[index].options[selectedAnswers[index]!];
-                if (selectedOption === quiz[index].answer) {
+                const selectedOption = quiz[index]?.options[selectedAnswers[index]!];
+                if (selectedOption === quiz[index]?.answer) {
                     newScore++;
                 }
             });
             setTotalScored(newScore);
         }
     }, [showResult, selectedAnswers, quiz]);
+
 
     useEffect(() => {
         try {
@@ -66,21 +67,28 @@ const QuizPageScreen = () => {
     }, [data]);
 
     const handleClickContinue = () => {
-
         if (quiz.length - 1 === currentQuizIndex) {
-            navigation.navigate('ResultPage', { score: totalScored, totalQuestions: quiz.length })
+            navigation.reset({
+                index: 0,
+                routes: [{ name: 'ResultPage', params: { score: totalScored, totalQuestions: quiz.length } }]
+            });
         }
 
         if (showResult === false) {
             if (activeIndex !== null) {
-                setShowResult(true)
+                setSelectedAnswers(prev => ({
+                    ...prev,
+                    [currentQuizIndex]: activeIndex
+                }));
+                setShowResult(true);
             }
         } else {
-            setShowResult(false)
-            setActiveIndex(null)
-            setCurrentQuizIndex(prev => Math.min(quiz.length - 1, prev + 1))
+            setShowResult(false);
+            setActiveIndex(null);
+            setCurrentQuizIndex(prev => Math.min(quiz.length - 1, prev + 1));
         }
-    }
+    };
+
 
     const RenderOptionContainer = () => {
         return (
@@ -105,14 +113,14 @@ const QuizPageScreen = () => {
 
                         if (showResult) {
                             if (isCorrectAnswer) {
-                                bgColor = '#16C47F'; // green for correct answer
+                                bgColor = '#16C47F';
                                 icon = '✅';
                             } else if (isWrongSelection) {
-                                bgColor = '#D94242'; // red for wrong selection
+                                bgColor = '#D94242';
                                 icon = '❌';
                             }
                         } else if (isSelected) {
-                            bgColor = '#8EA3A6';
+                            bgColor = '#999999';
                             textColor = 'black';
                         }
 
@@ -151,9 +159,6 @@ const QuizPageScreen = () => {
                                             {item}
                                         </Text>
                                     </View>
-                                    {showResult && icon ? (
-                                        <Text style={{ fontSize: 18 }}>{icon}</Text>
-                                    ) : null}
                                 </View>
                             </TouchableOpacity>
                         );
@@ -174,15 +179,15 @@ const QuizPageScreen = () => {
             )}
 
             <View style={{ flex: 1, justifyContent: 'flex-end', paddingVertical: 20 }}>
-                <TouchableOpacity 
-                    activeOpacity={.8} 
-                    onPress={handleClickContinue} 
-                    style={{ 
-                        padding: 15, 
-                        backgroundColor: activeIndex !== null || showResult ? '#16C47F' : '#cccccc', 
-                        borderRadius: 15, 
-                        alignItems: 'center', 
-                        justifyContent: 'center' 
+                <TouchableOpacity
+                    activeOpacity={.8}
+                    onPress={handleClickContinue}
+                    style={{
+                        padding: 15,
+                        backgroundColor: activeIndex !== null || showResult ? '#16C47F' : '#999999',
+                        borderRadius: 15,
+                        alignItems: 'center',
+                        justifyContent: 'center'
                     }}
                     disabled={!showResult && activeIndex === null}
                 >

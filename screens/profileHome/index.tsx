@@ -8,7 +8,13 @@ import ForgetPasswordScreen from 'screens/forgetPassword';
 const ProfileStack = () => {
     const Stack = createNativeStackNavigator<ProfileNavigationType>();
     return (
-        <Stack.Navigator initialRouteName='Profile'>
+        <Stack.Navigator
+            initialRouteName='Profile'
+            screenOptions={{
+                headerShown: false,
+                animation: 'ios_from_right'
+            }}
+        >
             <Stack.Screen
                 name='Profile'
                 component={ProfilePage}

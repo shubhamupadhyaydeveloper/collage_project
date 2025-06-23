@@ -6,11 +6,14 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
-import { horizontalScale, verticalScale } from '../utils/responsive';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import HorizontalSlider from './HorizontalSlider';
 import Modal from 'react-native-modal';
 import { FilterValuesTypes } from 'screens/generateHome';
+import BottomSheet, { BottomSheetModal } from '@gorhom/bottom-sheet';
+import GorhomModal from './GorhomModal';
+import { scale, moderateScale } from 'react-native-size-matters';
+
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
@@ -20,7 +23,6 @@ type FiltersProps = {
 };
 
 const Filters = ({ onValueChange, defaultValues }: FiltersProps) => {
-    const [activeModal, setActiveModal] = useState(false);
     const [quizType, setQuizType] = useState<'Text' | 'Image' | 'Pdf'>(
         defaultValues.type
     );
@@ -30,6 +32,14 @@ const Filters = ({ onValueChange, defaultValues }: FiltersProps) => {
     const [questionNumbers, setQuestionNumbers] = useState<string>(
         defaultValues.noOfQuestions
     );
+
+    const bottomSheetRef = useRef<BottomSheetModal>(null) as React.RefObject<BottomSheetModal>;
+
+
+    // Handle open
+    const handleOpen = useCallback(() => {
+        bottomSheetRef.current?.present();
+    }, []);
 
     const customData = [
         'Filters ✻',
@@ -54,7 +64,7 @@ const Filters = ({ onValueChange, defaultValues }: FiltersProps) => {
                 renderItem={({ item }) => (
                     <TouchableOpacity
                         activeOpacity={0.8}
-                        onPress={() => setActiveModal(true)}
+                        onPress={handleOpen}
                     >
                         <View
                             style={{
@@ -62,7 +72,7 @@ const Filters = ({ onValueChange, defaultValues }: FiltersProps) => {
                                 paddingHorizontal: 8,
                                 backgroundColor: 'white',
                                 borderRadius: 25,
-                                minHeight: verticalScale(30),
+                                minHeight: moderateScale(30),
                                 justifyContent: 'center',
                                 alignItems: 'center',
                             }}
@@ -71,6 +81,7 @@ const Filters = ({ onValueChange, defaultValues }: FiltersProps) => {
                                 style={{
                                     fontFamily: 'Nunito-Medium',
                                     color: 'black',
+                                    fontWeight: 'bold'
                                 }}
                             >
                                 {item}
@@ -80,100 +91,90 @@ const Filters = ({ onValueChange, defaultValues }: FiltersProps) => {
                 )}
                 horizontal
                 ItemSeparatorComponent={() => (
-                    <View style={{ width: horizontalScale(10) }} />
+                    <View style={{ width: moderateScale(10) }} />
                 )}
                 showsHorizontalScrollIndicator={false}
                 ListHeaderComponent={() => (
-                    <View style={{ width: horizontalScale(15) }} />
+                    <View style={{ width: moderateScale(15) }} />
                 )}
             />
 
-            <Modal
-                isVisible={activeModal}
-                backdropOpacity={0.7}
-                animationIn={'slideInUp'}
-                animationOut={'slideOutDown'}
-                style={{
-                    padding: 0,
-                    margin: 0
-                }}
+            <GorhomModal
+                bottomSheetRef={bottomSheetRef}
+                customSnapPoints={['50%',]}
+
             >
-                <View style={styles.modalWrapper}>
-                    <View>
-                        <TouchableOpacity
-                            activeOpacity={0.8}
-                            onPress={() => setActiveModal(false)}
-                        >
-                            <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
-                                <View
-                                    style={{
-                                        paddingVertical: 6,
-                                        paddingHorizontal: 12,
-                                        backgroundColor: 'white',
-                                        borderRadius: 25,
-                                        width: horizontalScale(100),
-                                        marginBottom: 10,
-                                    }}
-                                >
-                                    <Text style={{ textAlign: 'center' }}>Close</Text>
-                                </View>
-                            </View>
-                        </TouchableOpacity>
+                <View
+                    style={{
+                        height: moderateScale(400)
+                    }}
+                >
+                    <View style={styles.modalWrapper}>
 
                         <View style={styles.modalContent}>
-                            <View >
-                                <View style={{ gap: 8 }}>
-                                    <Text style={styles.label}>Quiz Type</Text>
+                            <View style={{
+                                gap: 25
+                            }}>
+                                <View style={{}}>
+                                    <Text style={styles.label}>Select Format</Text>
                                     <HorizontalSlider
                                         defaultValue={quizType}
-                                        width={horizontalScale(103)}
-                                        height={verticalScale(31)}
+                                        width={moderateScale(103)}
+                                        height={moderateScale(31)}
                                         data={['Text', 'Image', 'Pdf']}
                                         onChange={(value: any) => setQuizType(value)}
                                     />
                                 </View>
 
-                                <View style={{ gap: 8 }}>
-                                    <Text style={styles.label}>Question Type</Text>
+                                <View style={{}}>
+                                    <Text style={styles.label}>Question Level</Text>
                                     <HorizontalSlider
                                         defaultValue={questionType}
-                                        height={verticalScale(31)}
-                                        width={horizontalScale(103)}
+                                        height={moderateScale(31)}
+                                        width={moderateScale(103)}
                                         data={['Hard 🔥', 'Medium 💪', 'Easy 😄']}
                                         onChange={setQuestionType}
                                     />
                                 </View>
 
-                                <View style={{ gap: 8 }}>
+                                <View style={{}}>
                                     <Text style={styles.label}>Number Of Questions</Text>
                                     <HorizontalSlider
                                         defaultValue={questionNumbers}
-                                        height={verticalScale(31)}
-                                        width={horizontalScale(103)}
+                                        height={moderateScale(31)}
+                                        width={moderateScale(103)}
                                         data={['Below 5', 'Only 5', 'Above 5']}
                                         onChange={setQuestionNumbers}
                                     />
                                 </View>
                             </View>
 
-                            <TouchableOpacity
-                                onPress={() => {
-                                    onValueChange({
-                                        difficulty: questionType,
-                                        noOfQuestions: questionNumbers,
-                                        type: quizType,
-                                    });
-                                    setActiveModal(false);
-                                }}
-                                activeOpacity={0.8}
-                                style={styles.saveButton}
-                            >
-                                <Text style={styles.saveButtonText}>Save Changes</Text>
-                            </TouchableOpacity>
+                            <View style={{
+                                flex: 1,
+                                justifyContent: 'flex-end',
+                                marginBottom: moderateScale(55)
+                            }}>
+                                <TouchableOpacity
+                                    onPress={() => {
+                                        onValueChange({
+                                            difficulty: questionType,
+                                            noOfQuestions: questionNumbers,
+                                            type: quizType,
+                                        });
+                                        bottomSheetRef.current?.close()
+                                    }}
+                                    activeOpacity={0.8}
+                                    style={styles.saveButton}
+                                >
+                                    <Text style={styles.saveButtonText}>Save Changes</Text>
+                                </TouchableOpacity>
+                            </View>
                         </View>
+
                     </View>
                 </View>
-            </Modal>
+            </GorhomModal>
+
         </View>
     );
 };
@@ -196,8 +197,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     modalWrapper: {
-        flex: 1,
-        justifyContent: 'flex-end',
+        flex: 1
     },
 
     modalContainer: {
@@ -231,8 +231,9 @@ const styles = StyleSheet.create({
         gap: 20,
         backgroundColor: 'white',
         padding: 10,
-        borderTopLeftRadius : 10,
-        borderTopRightRadius : 10
+        borderTopLeftRadius: 10,
+        borderTopRightRadius: 10,
+        flex: 1
     },
 
     filterGroup: {
@@ -243,8 +244,8 @@ const styles = StyleSheet.create({
 
     label: {
         fontSize: 14,
-        fontWeight: '600',
-        color: '#333',
+        fontFamily: 'Nunito-Medium',
+        color: 'black',
         marginBottom: 8,
     },
 

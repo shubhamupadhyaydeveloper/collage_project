@@ -43,8 +43,8 @@ export default function TabLayout() {
                 headerShown: false,
                 lazy: true,
                 tabBarHideOnKeyboard: true,
-                tabBarInactiveTintColor: '#ffffff',
-                tabBarActiveTintColor: '#16C47F',
+                tabBarInactiveTintColor: '#999999',
+                tabBarActiveTintColor: '#ffffff',
                 tabBarStyle: {
                     // height: iosDevice ? verticalScale(80) : verticalScale(95),
                     backgroundColor: Colors.lightText,

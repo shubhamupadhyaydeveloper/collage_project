@@ -42,13 +42,13 @@ const ForgetPasswordScreen = () => {
 
     return (
         <View style={{ flex: 1 }}>
-            <StatusBar barStyle={'light-content'} translucent />
+            <StatusBar barStyle={'light-content'} backgroundColor={'#222'} />
             <View style={{ flexDirection: 'row', gap: 10, alignItems: 'center', backgroundColor: '#222', paddingTop: insets.top + 15, paddingBottom: 10 }}>
                 <TouchableOpacity style={{ marginLeft: 15 }} onPress={() => navigation.goBack()}>
                     <FeatherIcon name='arrow-left' color={'white'} size={24} />
                 </TouchableOpacity>
                 <View style={{ width: "75%" }}>
-                    <Text style={{ fontSize: 20, color: 'white', fontFamily: "Poppins-Bold", textAlign: 'center' }}>ForgetPassword</Text>
+                    <Text style={{ fontSize: 20, color: 'white', fontFamily: "Nunito-Bold", textAlign: 'center' }}>Forget Password</Text>
                 </View>
             </View>
 

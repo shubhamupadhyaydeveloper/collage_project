@@ -9,6 +9,7 @@ import * as Clipboard from 'expo-clipboard';
 
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons'
 import IcoIcons from 'react-native-vector-icons/Ionicons'
+import { moderateScale } from 'react-native-size-matters';
 
 const QuizWithImage = () => {
   const [cameraImage, setCameraImage] = useState<any>('')
@@ -36,7 +37,7 @@ const QuizWithImage = () => {
     console.log('this is working')
     const result = await TextRecognition.recognize(imageUrl);
     setProcessedText(result.text)
-    setModalVisible(prev => !prev)
+    setModalVisible(true)
   }
 
   const handleTakeImage = async () => {
@@ -92,7 +93,7 @@ const QuizWithImage = () => {
         quality: 1,
       });
 
-       if (!result.canceled) {
+      if (!result.canceled) {
         const imageUri = result.assets[0].uri;
         setCameraImage(imageUri)
       }
@@ -138,33 +139,36 @@ const QuizWithImage = () => {
           </View>
         ) : (
           <View style={styles.emptyImageContainer}>
-            <Text style={styles.emptyImageContainerText}>No Image Selected</Text>
+            <Image
+              source={{
+                uri: 'https://res.cloudinary.com/dlv1uvt41/image/upload/v1750663213/gallery_10054335_ft4em8.png'
+              }}
+              style={{
+                height: moderateScale(150),
+                width: moderateScale(150)
+              }}
+            />
           </View>
         )}
       </View>
 
       <View style={{ gap: 10 }}>
         {!cameraImage && (
-          <View style={{ gap: 10 }}>
-            <TouchableOpacity activeOpacity={.8} onPress={handleTakeImage}>
-              <View style={{ padding: 15, borderRadius: 10, backgroundColor: '#0D9276', }}>
-                <Text style={{ textAlign: 'center', fontSize: 12, lineHeight: 14, fontFamily: 'Bungee-Regular', color: 'white' }}>Click Image</Text>
-              </View>
+          <View style={{ paddingHorizontal: 20 }}>
+
+            <TouchableOpacity style={styles.secondaryButton} onPress={handleTakeImage}>
+              <Text style={styles.secondaryButtonText}>Take Photo</Text>
             </TouchableOpacity>
-            {/* <Text style={{ textAlign: 'center', fontFamily: 'Nunito-Bold', fontSize: 14 }}>Or</Text> */}
-            <TouchableOpacity activeOpacity={.8} onPress={handleSelectImage}>
-              <View style={{ padding: 15, borderRadius: 10, backgroundColor: '#0D9276', }}>
-                <Text style={{ textAlign: 'center', fontSize: 12, lineHeight: 14, fontFamily: 'Bungee-Regular', color: 'white' }}>Select Image</Text>
-              </View>
+            <TouchableOpacity style={styles.secondaryButton} onPress={handleSelectImage}>
+              <Text style={styles.secondaryButtonText}>Choose from Gallery</Text>
             </TouchableOpacity>
+
           </View>
         )}
 
         {cameraImage && (
-          <TouchableOpacity activeOpacity={.8} onPress={() => handleExtractText(cameraImage)}>
-            <View style={{ padding: 15, borderRadius: 10, backgroundColor: '#0D9276', }}>
-              <Text style={{ textAlign: 'center', fontSize: 12, lineHeight: 14, fontFamily: 'Bungee-Regular', color: 'white' }}>Get Text</Text>
-            </View>
+          <TouchableOpacity activeOpacity={.8} onPress={() => handleExtractText(cameraImage)} style={[styles.secondaryButton,{paddingHorizontal : 40}]} >
+            <Text style={{ textAlign: 'center', fontSize: 12, lineHeight: 14, fontFamily: 'Bungee-Regular', color: 'white' }}>Get Text</Text>
           </TouchableOpacity>
         )}
       </View>
@@ -241,12 +245,8 @@ const styles = StyleSheet.create({
   emptyImageContainer: {
     width: horizontalScale(200),
     height: verticalScale(300),
-    borderRadius: 12
-    , borderColor: '#d2d2d2',
-    borderWidth: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F5F7F8'
   },
   emptyImageContainerText: {
     fontFamily: 'Bungee-Regular',
@@ -268,4 +268,21 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     gap: 8,
   },
+  secondaryButton: {
+    flexDirection: 'row',
+    backgroundColor: '#1A1A1A',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#333',
+    padding: 14,
+    alignItems: 'center',
+    marginBottom: 12,
+    justifyContent: 'center'
+  },
+  secondaryButtonText: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: '600',
+    textAlign: 'center'
+  }
 })

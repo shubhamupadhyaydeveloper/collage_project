@@ -1,104 +1,131 @@
 import { NavigationProp, RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Animated, { FadeIn, FadeInDown, FadeInUp } from "react-native-reanimated";
-import { MaterialIcons } from "@expo/vector-icons";
+import { MaterialIcons, Feather } from "@expo/vector-icons";
 import { GenerateNavigationType } from "utils/types";
+import { Button } from "components/Button";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { horizontalScale, verticalScale } from "utils/responsive";
+import { toast } from 'burnt'
 
 const QuizResultScreen = () => {
     const navigation = useNavigation<NavigationProp<GenerateNavigationType, 'ResultPage'>>();
     const route = useRoute<RouteProp<GenerateNavigationType, 'ResultPage'>>();
-    const { score, totalQuestions } = route.params;
-    const percentage = Math.round((score / totalQuestions) * 100);
-
-    // Determine result category
-    let resultCategory = "";
-    let resultColor = "";
-    let resultEmoji = "🏆";
-    let resultIcon = "star";
-
-    if (percentage >= 80) {
-        resultCategory = "Excellent!";
-        resultColor = "#16C47F";
-    } else if (percentage >= 50) {
-        resultCategory = "Good Job!";
-        resultColor = "#4A90E2";
-    } else {
-        resultCategory = "Keep Practicing!";
-        resultColor = "#FF6B6B";
-    }
+    const insets = useSafeAreaInsets()
+    const {score , totalQuestions } = route.params;
 
     return (
-        <LinearGradient
-            colors={["#28323E", "#1A1F24"]}
-            style={styles.container}
+        <View
+            style={[styles.container, { paddingTop: insets.top + 100 }]}
         >
             <Animated.View entering={FadeIn.duration(800)} style={styles.content}>
-                {/* Result Header */}
-                <Animated.Text
-                    entering={FadeInUp.duration(1000)}
-                    style={[styles.resultCategory, { color: resultColor }]}
-                >
-                    {resultCategory}
-                </Animated.Text>
+                <View style={{
+                    flex: 1,
+                    justifyContent: 'center',
+                    marginTop: 40
+                }}>
+                    <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
+                        <TouchableOpacity
+                            activeOpacity={.8}
+                            style={{
+                                flexDirection: 'row',
+                                alignItems: 'center',  
+                                gap: 4,
+                            }}
+                            onPress={() => {
+                                 toast({
+                                    title : "Sorry now its not available, we are working on this feature",
+                                 })
+                            }}
+                        >
+                            <Feather name="star" color="white" size={24} />
+                            <Text style={{ color: 'white', textAlign: 'center' }}>Save</Text>
+                        </TouchableOpacity>
+                    </View>
 
-                {/* Score Circle */}
-                <Animated.View entering={FadeInDown.duration(1000)} style={styles.scoreContainer}>
-                    <Text style={styles.scoreText}>
-                        {score} out of {totalQuestions} correct
-                    </Text>
-                </Animated.View>
+                    {/* Result Header */}
+                    <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                        <Image source={{ uri: 'https://res.cloudinary.com/dlv1uvt41/image/upload/v1750658094/10511561-removebg-preview_zuesag.png' }} style={{ width: horizontalScale(200), height: verticalScale(200) }} />
+                        <Animated.Text
+                            entering={FadeInUp.duration(1000)}
+                            style={[styles.resultCategory, { color: 'white' }]}
+                        >
+                            Quiz Completed
+                        </Animated.Text>
+                    </View>
 
-                {/* Score Breakdown */}
-                <Animated.View entering={FadeInUp.delay(400).duration(800)} style={styles.breakdownContainer}>
-                    <View style={styles.breakdownItem}>
-                        <View style={[styles.breakdownDot, { backgroundColor: "#16C47F" }]} />
-                        <Text style={styles.breakdownText}>Correct: {score}</Text>
-                    </View>
-                    <View style={styles.breakdownItem}>
-                        <View style={[styles.breakdownDot, { backgroundColor: "#FF6B6B" }]} />
-                        <Text style={styles.breakdownText}>Wrong: {totalQuestions - score}</Text>
-                    </View>
-                    <View style={styles.breakdownItem}>
-                        <View style={[styles.breakdownDot, { backgroundColor: "#4A90E2" }]} />
-                        <Text style={styles.breakdownText}>Total: {totalQuestions}</Text>
-                    </View>
-                </Animated.View>
+                    {/* Score Circle */}
+                    <Animated.View entering={FadeInDown.duration(1000)} style={styles.scoreContainer}>
+                        <View>
+                            <Text style={{ color: 'white' }}>Score</Text>
+                            <View
+                                style={{
+                                    flexDirection: 'row',
+                                    alignItems: 'center', // use alignItems for row alignment
+                                    justifyContent: 'flex-end',
+                                }}
+                            >
+                                <Text style={{ color: 'white', fontSize: 40, fontFamily: 'Nunito-Regular' }}>{score} / </Text>
+                                <Text style={{ color: 'white', fontSize: 14, fontFamily: 'Nunito-Bold' }}>{totalQuestions}</Text>
+                            </View>
+
+                        </View>
+                    </Animated.View>
+
+                    {/* Score Breakdown */}
+                    {/* <Animated.View entering={FadeInUp.delay(400).duration(800)} style={styles.breakdownContainer}>
+                        <View style={styles.breakdownItem}>
+                            <View style={[styles.breakdownDot, { backgroundColor: "#16C47F" }]} />
+                            <Text style={styles.breakdownText}>Correct: {score}</Text>
+                        </View>
+                        <View style={styles.breakdownItem}>
+                            <View style={[styles.breakdownDot, { backgroundColor: "#FF6B6B" }]} />
+                            <Text style={styles.breakdownText}>Wrong: {totalQuestions - score}</Text>
+                        </View>
+                        <View style={styles.breakdownItem}>
+                            <View style={[styles.breakdownDot, { backgroundColor: "#4A90E2" }]} />
+                            <Text style={styles.breakdownText}>Total: {totalQuestions}</Text>
+                        </View>
+                    </Animated.View> */}
+                </View>
 
                 {/* Action Buttons */}
                 <Animated.View entering={FadeInUp.delay(600).duration(800)} style={styles.buttonContainer}>
-                    <TouchableOpacity
-                        style={[styles.button, { backgroundColor: resultColor }]}
+                    <Button
+                        title="Back To Home"
                         onPress={() => navigation.reset({ index: 0, routes: [{ name: "GenerateHome" }] })}
-                    >
-                        <Text style={styles.buttonText}>Back to Home</Text>
-                    </TouchableOpacity>
-
+                    />
                 </Animated.View>
             </Animated.View>
-        </LinearGradient>
+        </View>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 20,
+        paddingHorizontal: 30
     },
     content: {
         flex: 1,
         justifyContent: "center",
-        alignItems: "center",
+        // alignItems: "center",
     },
     resultCategory: {
-        fontSize: 36,
-        fontFamily: "Nunito-Bold",
+        fontSize: 14,
+        fontFamily: "Bungee-Regular",
         marginBottom: 20,
+        textAlign: 'center'
     },
     scoreContainer: {
         position: "relative",
         marginBottom: 40,
         alignItems: "center",
+        borderWidth: 1,
+        borderColor: '#999999',
+        padding: 40,
+        borderRadius: 12
     },
     scoreCircle: {
         justifyContent: "center",
@@ -154,8 +181,10 @@ const styles = StyleSheet.create({
         color: "white",
     },
     buttonContainer: {
+        flex: 1,
+        justifyContent: 'flex-end',
+        marginBottom: 15,
         width: "100%",
-        paddingHorizontal: 40,
     },
     button: {
         padding: 18,

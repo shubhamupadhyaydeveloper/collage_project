@@ -22,6 +22,7 @@ const AuthSignUpScreen = () => {
     resolver: zodResolver(signupSchema)
   })
   const [policyAgree, setPoliyAgree] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState(false)
   const keyboard = useAnimatedKeyboard();
 
   const translateStyle = useAnimatedStyle(() => {
@@ -30,8 +31,8 @@ const AuthSignUpScreen = () => {
       transform: [
         {
           translateY: withSpring(isOpen ? -keyboard.height.value + 90 : 0, {
-            damping : 80,
-            stiffness : 900
+            damping: 80,
+            stiffness: 900
           }),
 
         },
@@ -40,6 +41,7 @@ const AuthSignUpScreen = () => {
   });
 
   const OnSubmit = async (value: FieldValues) => {
+    setIsLoading(true)
     try {
       console.log('this is value', value)
       const user = await account.create(ID.unique(), value.email, value.password, value.name)
@@ -53,6 +55,8 @@ const AuthSignUpScreen = () => {
 
     } catch (error: any) {
       return { success: false, message: error.message || 'Signup failed' };
+    } finally {
+      setIsLoading(false)
     }
   };
 
@@ -123,7 +127,7 @@ const AuthSignUpScreen = () => {
               </View>
 
               <View>
-                <Button customBgColor={policyAgree ? '#0D9276' : '#999999'} disabled={!policyAgree} title='Sign Up' onPress={handleSubmit(OnSubmit)} />
+                <Button isLoading={isLoading} customBgColor={policyAgree ? '#0D9276' : '#999999'} disabled={!policyAgree} title='Sign Up' onPress={handleSubmit(OnSubmit)} />
               </View>
 
               <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>

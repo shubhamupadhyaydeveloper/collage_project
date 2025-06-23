@@ -1,5 +1,5 @@
 import { Alert, Image, Keyboard, KeyboardAvoidingView, Platform, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
-import React from 'react';
+import React, { useState } from 'react';
 
 import { CommonActions, NavigationProp, useNavigation } from '@react-navigation/native';
 
@@ -16,16 +16,16 @@ import { toast } from 'burnt'
 
 const AuthLoginScreen = () => {
     const navigation = useNavigation<NavigationProp<AuthStackNavigationType, 'Login'>>();
+    const [isLoading,setIsLoading] = useState(false)
 
-    const { control, handleSubmit, formState: { isLoading }, reset } = useForm({
+    const { control, handleSubmit, formState: {  }, reset } = useForm({
         resolver: zodResolver(loginSchema),
     });
 
     const onSubmit = async (value: FieldValues) => {
+        setIsLoading(true)
         try {
-            console.log('this is value', value);
-
-            const session = await account.createEmailPasswordSession(value.email, value.password);
+           await account.createEmailPasswordSession(value.email, value.password);
 
             navigation.dispatch(
                 CommonActions.reset({
@@ -51,6 +51,8 @@ const AuthLoginScreen = () => {
                 })
                 // Alert.alert('Login Failed', err.message ?? 'Something went wrong');
             }
+        } finally {
+            setIsLoading(false)
         }
 
     };
@@ -80,7 +82,7 @@ const AuthLoginScreen = () => {
 
                         <View style={{ flex: 1, justifyContent: 'flex-end', paddingBottom: 20, gap: 10 }}>
                             {/* <CustomButton isSubmitting={isLoading} text="Log in" onPress={handleSubmit(onSubmit)} /> */}
-                            <Button title='Login' onPress={handleSubmit(onSubmit)} />
+                            <Button isLoading={isLoading} title='Login' onPress={handleSubmit(onSubmit)} />
 
                             <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
                                 <Text style={{ color: 'white' }}>
