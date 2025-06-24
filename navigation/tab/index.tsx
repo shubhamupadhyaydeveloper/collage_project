@@ -11,13 +11,16 @@ import GenerateScreen from 'screens/generate';
 import HomeScreen from 'screens/home';
 import ProfilePage from 'screens/profile';
 import CustomTabBar from './components/CustomTabBar';
-const Tab = createBottomTabNavigator<BottomTabNavigationType>();
 import BrainIcon from '../../assets/raw-svg/brain.svg'
 import SavedIcon from '../../assets/raw-svg/star.svg'
 import HomeFillIcon from '../../assets/raw-svg/home.svg'
+import StarIcon from '../../assets/raw-svg/star-solid.svg'
 import { Pressable } from 'react-native';
 import ProfileStack from 'screens/profileHome';
+import SavedScreen from 'screens/saved';
+import { moderateScale } from 'react-native-size-matters';
 
+const Tab = createBottomTabNavigator<BottomTabNavigationType>();
 export default function TabLayout() {
     function CustomTabBarButton({ children, onPress, onLayout }: BottomTabBarButtonProps) {
         return (
@@ -39,6 +42,7 @@ export default function TabLayout() {
 
     return (
         <Tab.Navigator
+            
             screenOptions={{
                 headerShown: false,
                 lazy: true,
@@ -56,12 +60,15 @@ export default function TabLayout() {
                     shadowOpacity: 0.25,
                     shadowRadius: 4,
                     elevation: 5,
+                    position: 'relative'
                 },
                 tabBarLabelStyle: {
                     fontSize: 10,
                     fontFamily: 'Nunito-Medium',
                     // marginTop: verticalScale(2),
                 },
+                tabBarPosition : "bottom"
+                
             }}
         >
             <Tab.Screen
@@ -73,7 +80,7 @@ export default function TabLayout() {
                         <CustomTabBarButton {...props} />
                     ),
                     tabBarIcon: ({ focused, color }) => (
-                        <HomeFillIcon width={horizontalScale(28)} height={verticalScale(28)} fill={color} color={"red"} />
+                        <HomeFillIcon width={moderateScale(28)} height={moderateScale(28)} fill={color} color={"red"} />
                     )
                 }}
             />
@@ -86,7 +93,7 @@ export default function TabLayout() {
                         <CustomTabBarButton {...props} />
                     ),
                     tabBarIcon: ({ focused, color }) => (
-                        <BrainIcon width={horizontalScale(28)} height={verticalScale(28)} fill={color} />
+                        <BrainIcon width={moderateScale(28)} height={moderateScale(28)} fill={color} />
                     )
                 }}
             />
@@ -99,10 +106,26 @@ export default function TabLayout() {
                         <CustomTabBarButton {...props} />
                     ),
                     tabBarIcon: ({ focused, color }) => (
-                        <SavedIcon width={horizontalScale(25)} height={verticalScale(25)} fill={color} />
+                        <SavedIcon width={moderateScale(25)} height={moderateScale(25)} fill={color} />
                     )
                 }}
             />
+
+            <Tab.Screen
+                name='Saved'
+                component={SavedScreen}
+                options={{
+                    headerShown: false,
+                    tabBarButton: (props) => (
+                        <CustomTabBarButton {...props} />
+                    ),
+                    tabBarIcon: ({ focused, color }) => (
+                        <StarIcon width={moderateScale(28)} height={moderateScale(28)} fill={color} />
+                    )
+                }}
+            />
+
+
 
         </Tab.Navigator>
     );

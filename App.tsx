@@ -6,6 +6,7 @@ import * as NavigationBar from 'expo-navigation-bar';
 import { Platform } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import { MenuProvider } from 'react-native-popup-menu';
 
 export default function App() {
 
@@ -29,7 +30,9 @@ export default function App() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <BottomSheetModalProvider>
-        <RootStack />
+        <MenuProvider>
+          <RootStack />
+        </MenuProvider>
       </BottomSheetModalProvider>
     </GestureHandlerRootView>
   );

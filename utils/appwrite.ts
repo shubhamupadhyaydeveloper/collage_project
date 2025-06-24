@@ -1,7 +1,9 @@
-import { Client, Account } from 'appwrite';
+import { Client, Account,Databases,Storage } from 'appwrite';
 import {APPWRITE_ENDPOINT,APPWRITE_PROJECT_ID} from '@env'
-export const client = new Client();
 
+export const client = new Client();
+export const databases = new Databases(client);
+export const storage = new Storage(client);
 
 client
     .setEndpoint(APPWRITE_ENDPOINT)

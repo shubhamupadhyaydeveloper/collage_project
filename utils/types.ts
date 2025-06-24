@@ -3,7 +3,7 @@ import { NavigatorScreenParams } from "@react-navigation/native"
 export type GenerateNavigationType = {
   GenerateHome: undefined;
   QuizPage: {data :any};
-  ResultPage : {score : number, totalQuestions:number};
+  ResultPage : {score : number, totalQuestions:number, data :any};
 };
 
 export type ProfileNavigationType = {
@@ -16,6 +16,7 @@ export type BottomTabNavigationType = {
   Home: undefined,
   Generate: NavigatorScreenParams<GenerateNavigationType>,
   Profile: NavigatorScreenParams<ProfileNavigationType>,
+  Saved : undefined
 }
 
 export type RootStackNavigationType = {

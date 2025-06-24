@@ -1,19 +1,89 @@
 import { NavigationProp, RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import Animated, { FadeIn, FadeInDown, FadeInUp } from "react-native-reanimated";
-import { MaterialIcons, Feather } from "@expo/vector-icons";
+import { MaterialIcons, FontAwesome } from "@expo/vector-icons";
 import { GenerateNavigationType } from "utils/types";
 import { Button } from "components/Button";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { horizontalScale, verticalScale } from "utils/responsive";
 import { toast } from 'burnt'
+import { APPWRITE_COLLECTION_ID, APPWRITE_DATABASE_ID } from '@env'
+import { databases } from "utils/appwrite";
+import { useState } from "react";
+import Modal from 'react-native-modal';
+import { moderateScale } from "react-native-size-matters";
 
 const QuizResultScreen = () => {
     const navigation = useNavigation<NavigationProp<GenerateNavigationType, 'ResultPage'>>();
     const route = useRoute<RouteProp<GenerateNavigationType, 'ResultPage'>>();
     const insets = useSafeAreaInsets()
-    const {score , totalQuestions } = route.params;
+    const { score, totalQuestions, data } = route.params;
+    const [quizSaved, setQuizSaved] = useState(false)
+    const [isModalVisible, setModalVisible] = useState(false);
+
+    const handleQuizSaved = async () => {
+        if (quizSaved) {
+            toast({
+                title: "already saved"
+            })
+            return;
+        }
+        setModalVisible(true)
+    }
+
+    const RenderModal = () => {
+        const [input, setInput] = useState('')
+
+        const handleSave = async () => {
+            try {
+                await databases.createDocument(
+                    APPWRITE_DATABASE_ID,
+                    APPWRITE_COLLECTION_ID,
+                    'unique()',
+                    {
+                        title: input,
+                        quizes: JSON.stringify(data)
+                    }
+                )
+                setQuizSaved(true)
+            } catch (error: any) {
+                toast({
+                    title: error
+                })
+            } finally {
+                setModalVisible(false)
+            }
+        }
+
+        return (
+            <View style={{
+                backgroundColor: 'white',
+                padding: 20,
+                width: moderateScale(300),
+                height: moderateScale(140),
+                borderRadius: 12,
+                gap: moderateScale(15)
+            }}>
+                <TextInput
+                    value={input}
+                    onChangeText={setInput}
+                    placeholder="Enter title here"
+                    style={{
+                        borderColor: "#999999",
+                        borderWidth: 1,
+                        borderRadius: 8,
+                        paddingHorizontal: 10
+                    }}
+                />
+
+                <Button title="Save" onPress={() => {
+                    handleSave()
+                }} />
+
+            </View>
+        )
+    }
 
     return (
         <View
@@ -30,16 +100,14 @@ const QuizResultScreen = () => {
                             activeOpacity={.8}
                             style={{
                                 flexDirection: 'row',
-                                alignItems: 'center',  
+                                alignItems: 'center',
                                 gap: 4,
                             }}
                             onPress={() => {
-                                 toast({
-                                    title : "Sorry now its not available, we are working on this feature",
-                                 })
+                                handleQuizSaved()
                             }}
                         >
-                            <Feather name="star" color="white" size={24} />
+                            <FontAwesome name={quizSaved ? 'star' : 'star-o'} color="white" size={24} />
                             <Text style={{ color: 'white', textAlign: 'center' }}>Save</Text>
                         </TouchableOpacity>
                     </View>
@@ -98,6 +166,23 @@ const QuizResultScreen = () => {
                     />
                 </Animated.View>
             </Animated.View>
+
+
+            <Modal
+                isVisible={isModalVisible}
+                onBackdropPress={() => setModalVisible(false)}
+                backdropOpacity={0.9}
+                animationIn={'slideInLeft'}
+                animationOut={'slideOutLeft'}
+                style={{
+
+                }}
+            >
+                <View style={styles.modalContainer}
+                >
+                    <RenderModal />
+                </View>
+            </Modal>
         </View>
     );
 };
@@ -201,6 +286,12 @@ const styles = StyleSheet.create({
         color: "white",
         fontFamily: "Nunito-Bold",
         fontSize: 16,
+    },
+    modalContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingHorizontal: 20
     },
 });
 

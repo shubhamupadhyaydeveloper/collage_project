@@ -22,7 +22,7 @@ type DataType = {
 const QuizPageScreen = () => {
     const navigation = useNavigation<NavigationProp<GenerateNavigationType, 'QuizPage'>>()
     const route = useRoute<RouteProp<GenerateNavigationType, 'QuizPage'>>();
-    const { data } = route.params;
+    const { data : quizData } = route.params;
     const [currentQuizIndex, setCurrentQuizIndex] = useState(0);
     const [quiz, setQuiz] = useState<DataType[]>([]);
     const insets = useSafeAreaInsets()
@@ -30,6 +30,7 @@ const QuizPageScreen = () => {
     const [activeIndex, setActiveIndex] = useState<number | null>(null)
     const [totalScored, setTotalScored] = useState(0)
     const [selectedAnswers, setSelectedAnswers] = useState<{ [key: number]: number | null }>({});
+
 
     const QuizProgressBar = ({ currentQuizIndex, totalQuiz }: { currentQuizIndex: number, totalQuiz: number }) => {
         return (
@@ -56,21 +57,21 @@ const QuizPageScreen = () => {
 
     useEffect(() => {
         try {
-            if (Array.isArray(data)) {
-                setQuiz(data);
+            if (Array.isArray(quizData)) {
+                setQuiz(quizData);
             } else {
-                console.error("Data is not an array:", data);
+                console.error("Data is not an array:", quizData);
             }
         } catch (error) {
             console.error("Error parsing quiz data:", error);
         }
-    }, [data]);
+    }, [quizData]);
 
     const handleClickContinue = () => {
         if (quiz.length - 1 === currentQuizIndex) {
             navigation.reset({
                 index: 0,
-                routes: [{ name: 'ResultPage', params: { score: totalScored, totalQuestions: quiz.length } }]
+                routes: [{ name: 'ResultPage', params: { score: totalScored, totalQuestions: quiz.length, data : quizData} }]
             });
         }
 
