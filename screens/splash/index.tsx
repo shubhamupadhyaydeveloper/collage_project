@@ -1,28 +1,48 @@
-import { Button, Image, StyleSheet, Text, View } from 'react-native';
-import React, { useEffect } from 'react'
+import { Image, StyleSheet, Text, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
 import { CommonActions, NavigationProp, useNavigation } from '@react-navigation/native';
-import { AuthStackNavigationType, RootStackNavigationType } from '../../utils/types'
+import { RootStackNavigationType } from '../../utils/types';
 import { account } from 'utils/appwrite';
-// import { mmkvStorage } from 'utils/mmkvstore';
-
-
+import Animated, { Easing, useSharedValue, useAnimatedStyle, withTiming, withDelay } from 'react-native-reanimated';
 
 const SplashScreen = () => {
   const navigation = useNavigation<NavigationProp<RootStackNavigationType, 'Splash'>>();
+  const [imageLoaded, setImageLoaded] = useState(false);
+
+  const scaleAnim = useSharedValue(0);
+  const textOpacity = useSharedValue(0);
+  const textTranslate = useSharedValue(20);
 
   const checkUser = async () => {
-    const user = await account.get()
-    return user
-  }
+    const user = await account.get();
+    return user;
+  };
 
-  // const isLogin = mmkvStorage.getItem('isLogin');
+  useEffect(() => {
+    if (imageLoaded) {
+      // Animate image pop-up
+      scaleAnim.value = withTiming(1, {
+        duration: 600,
+        easing: Easing.out(Easing.exp),
+      });
+
+      // Animate text with delay
+      textOpacity.value = withDelay(
+        400,
+        withTiming(1, { duration: 600 })
+      );
+      textTranslate.value = withDelay(
+        400,
+        withTiming(0, { duration: 600 })
+      );
+    }
+  }, [imageLoaded]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
       (async () => {
         try {
           const user = await checkUser();
-          console.log('this is user',user)
           if (user) {
             navigation.dispatch(
               CommonActions.reset({
@@ -47,18 +67,54 @@ const SplashScreen = () => {
           );
         }
       })();
-    }, 2000);
+    }, 2500);
+
     return () => clearTimeout(timer);
   }, [navigation]);
 
+  const animatedImageStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scaleAnim.value }],
+  }));
+
+  const animatedTextStyle = useAnimatedStyle(() => ({
+    opacity: textOpacity.value,
+    transform: [{ translateY: textTranslate.value }],
+  }));
+
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <View>
-        <Image source={{uri : "https://res.cloudinary.com/dlv1uvt41/image/upload/v1750523793/playstore_c8viks.jpg"}} style={{ width: 300, height: 300 }} />
-        <Text style={{ color: 'white', fontSize: 24, fontWeight: "bold", textAlign: 'center',fontFamily : 'Bungee-Regular' }}>Quizkr</Text>
-      </View>
+    <View style={styles.container}>
+      <Animated.View style={[animatedImageStyle]}>
+        <Image
+          source={{ uri: "https://res.cloudinary.com/dlv1uvt41/image/upload/v1750523793/playstore_c8viks.jpg" }}
+          style={styles.image}
+          onLoadEnd={() => setImageLoaded(true)}
+        />
+      </Animated.View>
+      <Animated.Text style={[styles.text, animatedTextStyle]}>
+        Quizkr
+      </Animated.Text>
     </View>
   );
 };
 
 export default SplashScreen;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: 'black',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  image: {
+    width: 300,
+    height: 300,
+    borderRadius: 12,
+  },
+  text: {
+    color: 'white',
+    fontSize: 18,
+    fontFamily: 'Bungee-Regular',
+    marginTop: 20,
+  },
+});

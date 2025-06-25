@@ -34,7 +34,6 @@ const SavedScreen = () => {
       title: doc.title,
       options: JSON.parse(doc.quizes),
     }));
-
     setQuizData(allQuizzes);
   };
 
@@ -90,19 +89,18 @@ const SavedScreen = () => {
     );
   };
 
-  if (quizData.length === 0) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text style={{ fontSize: 20, color: '#fff' }}>No saved quizzes</Text>
-      </View>
-    );
-  }
 
   return (
     <View style={{ flex: 1, backgroundColor: '#000000', paddingTop: insets.top }}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Saved Quizes</Text>
       </View>
+
+      {quizData.length === 0 && (
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <Text style={{ fontSize: 20, color: '#fff' }}>No saved quizzes</Text>
+        </View>
+      )}
 
       {quizData.map((item, index) => (
         <RenderQuiz key={index} quiz={item} />
