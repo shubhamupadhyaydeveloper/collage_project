@@ -7,9 +7,7 @@ import { Platform } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { MenuProvider } from 'react-native-popup-menu';
-import * as SplashScreen from 'expo-splash-screen';
 
-SplashScreen.preventAutoHideAsync(); // 👈 prevent auto-hide
 
 export default function App() {
 
@@ -26,14 +24,8 @@ export default function App() {
     'Nunito-Medium': require('./assets/fonts/Nunito-Medium.ttf'),
     'Nunito-Regular': require('./assets/fonts/Nunito-Regular.ttf'),
     'Nunito-Bold': require('./assets/fonts/Nunito-Bold.ttf'),
-    'Inter-Regular': require('./assets/fonts/Inter_18pt-Bold.ttf'),
   })
 
-  useEffect(() => {
-    if (fontsLoaded) {
-      SplashScreen.hideAsync(); // 👈 hide after fonts are loaded
-    }
-  }, [fontsLoaded]);
 
   if (!fontsLoaded) return null;
   return (

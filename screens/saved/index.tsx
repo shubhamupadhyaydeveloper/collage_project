@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Animated, Pressable } from 'react-native';
 import { GestureHandlerRootView, TextInput } from 'react-native-gesture-handler';
-import { databases } from 'utils/appwrite';
+import { account, databases } from 'utils/appwrite';
 import { APPWRITE_COLLECTION_ID, APPWRITE_DATABASE_ID } from '@env';
 import Entypo from 'react-native-vector-icons/Entypo'
 import {
@@ -15,6 +15,7 @@ import {
 import { useFocusEffect, useNavigation, NavigationProp } from "@react-navigation/native";
 import { useCallback } from 'react';
 import { BottomTabNavigationType, GenerateNavigationType } from 'utils/types';
+import { Query } from 'appwrite';
 
 type QuizData = {
   id: string;
@@ -28,7 +29,12 @@ const SavedScreen = () => {
   const navigation = useNavigation<NavigationProp<BottomTabNavigationType>>()
 
   const fetchData = async () => {
-    const response = await databases.listDocuments(APPWRITE_DATABASE_ID, APPWRITE_COLLECTION_ID);
+    const user = await account.get();
+    const response = await databases.listDocuments(
+      APPWRITE_DATABASE_ID,
+      APPWRITE_COLLECTION_ID,
+      [Query.equal('userId', user.$id)]
+    );
     const allQuizzes = response.documents.map((doc) => ({
       id: doc.$id,
       title: doc.title,
@@ -71,9 +77,6 @@ const SavedScreen = () => {
                 navigation.navigate('Generate', { screen: 'QuizPage', params: { data: quiz.options } })
               }}>
                 <Text style={{ color: 'white', padding: 8 }}>Start Quiz</Text>
-              </MenuOption>
-              <MenuOption onSelect={() => alert(`Saved`)}>
-                <Text style={{ color: 'white', padding: 8 }}>Edit</Text>
               </MenuOption>
               <MenuOption onSelect={async () => {
                 await databases.deleteDocument(APPWRITE_DATABASE_ID, APPWRITE_COLLECTION_ID, quiz.id)

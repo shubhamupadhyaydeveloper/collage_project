@@ -9,7 +9,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { horizontalScale, verticalScale } from "utils/responsive";
 import { toast } from 'burnt'
 import { APPWRITE_COLLECTION_ID, APPWRITE_DATABASE_ID } from '@env'
-import { databases } from "utils/appwrite";
+import { account, databases } from "utils/appwrite";
 import { useState } from "react";
 import Modal from 'react-native-modal';
 import { moderateScale } from "react-native-size-matters";
@@ -34,16 +34,19 @@ const QuizResultScreen = () => {
 
     const RenderModal = () => {
         const [input, setInput] = useState('')
+        
 
         const handleSave = async () => {
             try {
+                const user = await account.get()
                 await databases.createDocument(
                     APPWRITE_DATABASE_ID,
                     APPWRITE_COLLECTION_ID,
                     'unique()',
                     {
                         title: input,
-                        quizes: JSON.stringify(data)
+                        quizes: JSON.stringify(data),
+                        userId : user.$id
                     }
                 )
                 setQuizSaved(true)

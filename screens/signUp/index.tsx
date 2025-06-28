@@ -46,13 +46,7 @@ const AuthSignUpScreen = () => {
       console.log('this is value', value)
       const user = await account.create(ID.unique(), value.email, value.password, value.name)
 
-      navigation.dispatch(
-        CommonActions.reset({
-          index: 0,
-          routes: [{ name: 'App' }],
-        })
-      );
-
+      navigation.navigate('Login')
     } catch (error: any) {
       return { success: false, message: error.message || 'Signup failed' };
     } finally {

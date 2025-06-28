@@ -22,7 +22,8 @@ export type BottomTabNavigationType = {
 export type RootStackNavigationType = {
   App: NavigatorScreenParams<BottomTabNavigationType>,
   Auth: NavigatorScreenParams<AuthStackNavigationType>,
-  Splash: undefined
+  Splash: undefined;
+  DeepLinking : {id : string}
 }
 
 export type AuthStackNavigationType = {

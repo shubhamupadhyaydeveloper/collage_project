@@ -307,6 +307,7 @@ const QuizWithImage = () => {
 
       <Modal
         isVisible={loading}
+        onBackdropPress={() => setLoading(prev => !prev)}
         backdropOpacity={1}
         animationIn={'fadeIn'}
         animationOut={'fadeOut'}

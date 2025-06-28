@@ -20,7 +20,7 @@ const SplashScreen = () => {
 
   useEffect(() => {
     if (imageLoaded) {
-      // Animate image pop-up
+
       scaleAnim.value = withTiming(1, {
         duration: 600,
         easing: Easing.out(Easing.exp),

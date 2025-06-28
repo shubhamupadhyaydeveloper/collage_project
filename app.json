@@ -3,6 +3,7 @@
     "name": "Quizkr",
     "slug": "Quizkr",
     "version": "1.0.0",
+    "scheme": "myapp",
     "web": {
       "favicon": "./assets/favicon.png"
     },

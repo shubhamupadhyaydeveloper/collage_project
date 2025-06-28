@@ -1,17 +1,60 @@
 import { DefaultTheme, NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-
 import DrawerNavigator from './drawer';
 import { ScrollContextProvider } from 'context/scrollContext';
 import { RootStackNavigationType } from 'utils/types';
 import AuthStackNavigation from './auth';
 import SplashScreen from 'screens/splash';
-import { navigationRef } from 'utils/navigation';
+import { navigate, navigationRef } from 'utils/navigation';
+import { useEffect, useState } from 'react';
+import DeepLinkingPage from 'screens/deepLink';
+import * as Linking from 'expo-linking'
 
 
 const Stack = createNativeStackNavigator<RootStackNavigationType>();
 
+export const linking = {
+  prefixes: [Linking.createURL('/')], // Handles expo://yourapp/
+  config: {
+    screens: {
+      Splash: 'splash',
+      App: {
+        screens: {
+          Home: 'home',
+          Profile: 'profile/:username',
+        },
+      },
+      Auth: 'auth',
+    },
+  },
+};
+
 export default function RootStack() {
+  const [initialRoute, setInitialRoute] = useState<'Splash' | 'DeepLinking' | null>(null)
+  const [initialParams, setInitialParams] = useState<any>(null);
+
+  useEffect(() => {
+    const checkInitialUrl = async () => {
+      const url = await Linking.getInitialURL();
+
+      if (url) {
+        const route = url.replace(/.*?:\/\//g, '');
+        const routeName = route.split('/')[0];
+        const param = route.split('/')[1];
+
+        if (routeName === 'deepLinking') {
+          setInitialRoute('DeepLinking');
+          setInitialParams({ id: param || '1223' });
+          return;
+        }
+      }
+
+      setInitialRoute('Splash');
+    }
+
+    checkInitialUrl()
+  }, [])
+
   const myTheme = {
     ...DefaultTheme,
     colors: {
@@ -20,6 +63,11 @@ export default function RootStack() {
 
     },
   };
+
+  if (!initialRoute) {
+    // Show a loading screen or nothing until we determine the initial route
+    return null;
+  }
 
   return (
     <ScrollContextProvider>
@@ -31,8 +79,7 @@ export default function RootStack() {
           },
           animation: 'ios_from_right'
         }}
-          initialRouteName="Splash"
-
+          initialRouteName={initialRoute}
         >
           <Stack.Screen
             name="App"
@@ -49,6 +96,12 @@ export default function RootStack() {
           <Stack.Screen
             name='Splash'
             component={SplashScreen}
+            options={{ headerShown: false }}
+          />
+
+          <Stack.Screen
+            name='DeepLinking'
+            component={DeepLinkingPage}
             options={{ headerShown: false }}
           />
 
