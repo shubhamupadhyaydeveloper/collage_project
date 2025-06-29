@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, Alert, ActivityIndicator } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Animated, Pressable } from 'react-native';
@@ -16,6 +16,13 @@ import { useFocusEffect, useNavigation, NavigationProp } from "@react-navigation
 import { useCallback } from 'react';
 import { BottomTabNavigationType, GenerateNavigationType } from 'utils/types';
 import { Query } from 'appwrite';
+import RNHTMLtoPDF from 'react-native-html-to-pdf';
+import { Platform, PermissionsAndroid } from 'react-native';
+import { generateHtml, Quiz } from 'utils/generateHtml';
+import { toast } from 'burnt'
+import RNFS from 'react-native-fs';
+import Share from 'react-native-share';
+import RNBlobUtil from 'react-native-blob-util';
 
 type QuizData = {
   id: string;
@@ -42,6 +49,35 @@ const SavedScreen = () => {
     }));
     setQuizData(allQuizzes);
   };
+
+  const createPDF = async (quizzes: Quiz[], fileName: string) => {
+    try {
+      const options = {
+        html: generateHtml(quizzes),
+        fileName: 'quiz_report',
+        directory: 'Documents',
+      };
+
+      const file = await RNHTMLtoPDF.convert(options);
+
+      if (!file || !file.filePath) {
+        console.warn('❗️ No file path returned!');
+        Alert.alert('PDF Failed', 'No file path returned from PDF converter.');
+        return;
+      }
+
+      await Share.open({
+        title: 'Share Quiz PDF',
+        url: `file://${file.filePath}`,
+        type: 'application/pdf',
+        failOnCancel: false,
+      });
+    } catch (err) {
+      Alert.alert('Error', 'PDF generation threw an error.');
+    }
+  };
+
+
 
   useFocusEffect(
     useCallback(() => {
@@ -78,6 +114,12 @@ const SavedScreen = () => {
               }}>
                 <Text style={{ color: 'white', padding: 8 }}>Start Quiz</Text>
               </MenuOption>
+              <MenuOption onSelect={() => {
+                createPDF(quiz.options, quiz.title)
+                console.log('this is path')
+              }}>
+                <Text style={{ color: 'white', padding: 8 }}>Share Quiz as Pdf</Text>
+              </MenuOption>
               <MenuOption onSelect={async () => {
                 await databases.deleteDocument(APPWRITE_DATABASE_ID, APPWRITE_COLLECTION_ID, quiz.id)
                 fetchData()
@@ -101,7 +143,7 @@ const SavedScreen = () => {
 
       {quizData.length === 0 && (
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <Text style={{ fontSize: 20, color: '#fff' }}>No saved quizzes</Text>
+          <ActivityIndicator color={'white'} size={'large'} />
         </View>
       )}
 

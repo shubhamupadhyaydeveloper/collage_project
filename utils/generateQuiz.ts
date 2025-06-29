@@ -31,7 +31,7 @@ export const generateQuizes = async ({ input }: { input: string }) => {
   Generate a quiz based on the above text.
   ONLY respond with a **JSON array** of questions with:
   - "question" (string),
-  - "options" (array of 4 strings),
+  - "options" (array of strings),
   - "answer" (string).
 
   If the context is unclear or irrelevant, ONLY return the string "ERROR_400" without quotes or formatting.

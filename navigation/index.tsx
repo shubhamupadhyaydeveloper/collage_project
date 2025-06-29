@@ -6,8 +6,7 @@ import { RootStackNavigationType } from 'utils/types';
 import AuthStackNavigation from './auth';
 import SplashScreen from 'screens/splash';
 import { navigate, navigationRef } from 'utils/navigation';
-import { useEffect, useState } from 'react';
-import DeepLinkingPage from 'screens/deepLink';
+import { useEffect, useState } from 'react'
 import * as Linking from 'expo-linking'
 
 
@@ -96,12 +95,6 @@ export default function RootStack() {
           <Stack.Screen
             name='Splash'
             component={SplashScreen}
-            options={{ headerShown: false }}
-          />
-
-          <Stack.Screen
-            name='DeepLinking'
-            component={DeepLinkingPage}
             options={{ headerShown: false }}
           />
 

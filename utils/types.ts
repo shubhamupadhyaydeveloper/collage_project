@@ -7,7 +7,7 @@ export type GenerateNavigationType = {
 };
 
 export type ProfileNavigationType = {
-  Profile : undefined;
+  ProfileHome : undefined;
   ForgetPassword : undefined
 }
 
