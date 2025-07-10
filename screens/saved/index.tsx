@@ -20,9 +20,7 @@ import RNHTMLtoPDF from 'react-native-html-to-pdf';
 import { Platform, PermissionsAndroid } from 'react-native';
 import { generateHtml, Quiz } from 'utils/generateHtml';
 import { toast } from 'burnt'
-import RNFS from 'react-native-fs';
 import Share from 'react-native-share';
-import RNBlobUtil from 'react-native-blob-util';
 
 type QuizData = {
   id: string;
@@ -34,20 +32,28 @@ const SavedScreen = () => {
   const insets = useSafeAreaInsets();
   const [quizData, setQuizData] = useState<QuizData[]>([]);
   const navigation = useNavigation<NavigationProp<BottomTabNavigationType>>()
+  const [isLoading, setIsLoading] = useState(false)
 
   const fetchData = async () => {
-    const user = await account.get();
-    const response = await databases.listDocuments(
-      APPWRITE_DATABASE_ID,
-      APPWRITE_COLLECTION_ID,
-      [Query.equal('userId', user.$id)]
-    );
-    const allQuizzes = response.documents.map((doc) => ({
-      id: doc.$id,
-      title: doc.title,
-      options: JSON.parse(doc.quizes),
-    }));
-    setQuizData(allQuizzes);
+    setIsLoading(true)
+    try {
+      const user = await account.get();
+      const response = await databases.listDocuments(
+        APPWRITE_DATABASE_ID,
+        APPWRITE_COLLECTION_ID,
+        [Query.equal('userId', user.$id)]
+      );
+      const allQuizzes = response.documents.map((doc) => ({
+        id: doc.$id,
+        title: doc.title,
+        options: JSON.parse(doc.quizes),
+      }));
+      setQuizData(allQuizzes);
+    } catch (error) {
+
+    } finally {
+      setIsLoading(false)
+    }
   };
 
   const createPDF = async (quizzes: Quiz[], fileName: string) => {
@@ -74,6 +80,7 @@ const SavedScreen = () => {
       });
     } catch (err) {
       Alert.alert('Error', 'PDF generation threw an error.');
+      console.log('pdf generation error',err)
     }
   };
 
@@ -141,9 +148,15 @@ const SavedScreen = () => {
         <Text style={styles.headerTitle}>Saved Quizes</Text>
       </View>
 
-      {quizData.length === 0 && (
+      {isLoading && (
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
           <ActivityIndicator color={'white'} size={'large'} />
+        </View>
+      )}
+
+      {quizData.length === 0 && !isLoading && (
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <Text style={{ color: 'white', fontFamily: 'Nunito-Bold', fontSize: 18 }}>No Saved Quizes</Text>
         </View>
       )}
 

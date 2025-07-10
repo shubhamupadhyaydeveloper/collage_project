@@ -20,7 +20,7 @@ type BoxProps = {
 
 const ProfilePage = () => {
   const insets = useSafeAreaInsets();
-  const navigation = useNavigation<NavigationProp<ProfileNavigationType,'Profile'>>();
+  const navigation = useNavigation<NavigationProp<ProfileNavigationType,'ProfileHome'>>();
   const [accountDetail, setAccountDetail] = useState<Models.User<Models.Preferences> | null>(null);
 
   const openEmail = () => {

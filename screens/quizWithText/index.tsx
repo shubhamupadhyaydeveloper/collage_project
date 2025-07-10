@@ -11,7 +11,8 @@ import {
   TextInput,
   TouchableOpacity,
   TouchableWithoutFeedback,
-  View
+  View,
+  KeyboardEvent
 } from 'react-native'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { GoogleGenerativeAI } from '@google/generative-ai'
@@ -37,6 +38,29 @@ const QuizWithText = () => {
   const navigation = useNavigation<NavigationProp<GenerateNavigationType>>()
   const [isLoading, setIsLoading] = useState(false)
   const insets = useSafeAreaInsets();
+  const [keyboardOpen, setKeyboardOpen] = useState(false);
+
+  useEffect(() => {
+    const showSubscription = Keyboard.addListener(
+      Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow',
+      (_e: KeyboardEvent) => {
+        setKeyboardOpen(true);
+      }
+    );
+
+    const hideSubscription = Keyboard.addListener(
+      Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide',
+      (_e: KeyboardEvent) => {
+        setKeyboardOpen(false);
+      }
+    );
+
+    return () => {
+      showSubscription.remove();
+      hideSubscription.remove();
+    };
+  }, []);
+
 
   // useEffect(() => {
   //   const getInput = mmkvStorage.getItem('textinput');
@@ -79,66 +103,76 @@ const QuizWithText = () => {
 
 
   return (
-
-    <KeyboardAvoidingView
-      style={{ flex: 1, backgroundColor: '#000' }}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      keyboardVerticalOffset={insets.top + 40}
-    >
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={{ flex: 1 }}>
-          <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ padding: 16 }}>
-            <TextInput
-              value={input}
-              onChangeText={handleTextInput}
-              multiline
-              style={{
-                color: 'white',
-                minHeight: verticalScale(screenHeight * 0.7),
-                maxHeight: verticalScale(screenHeight * 0.7),
-                textAlignVertical: 'top',
-                padding: 10,
-                borderRadius: 10,
-                fontFamily: "Nunito-Regular",
-                fontSize: 18
-              }}
-              placeholder='Write any Context here to generate Questions'
-              placeholderTextColor='#999'
-            />
-          </ScrollView>
-
-
-
-          <View style={[styles.buttonContainer]}>
-            <TouchableOpacity onPress={handleRemove}>
-              <Text style={{ color: 'white', fontSize: 18, fontFamily: 'Nunito-Bold' }}>Clear</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={handleSubmit} style={styles.quizButton}>
-              <MaterialIcon name='timer' color={'white'} size={22} />
-              <Text style={{ color: 'white', fontWeight: 'bold', fontFamily: 'Nunito-Bold' }}>Quiz</Text>
-            </TouchableOpacity>
-          </View>
-
-          <Modal
-            isVisible={isLoading}
-            backdropOpacity={1}
-            animationIn={'fadeIn'}
-            animationOut={'fadeOut'}
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={{ flex: 1, backgroundColor: '#000', overflow: 'hidden' }}>
+        <KeyboardAvoidingView
+          style={{ flex: 1 }}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? insets.top + 40 : 0}
+        >
+          {/* Scrollable TextInput area */}
+          <ScrollView
+            contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 20, flexGrow: 1 }}
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
           >
-            <View style={styles.modalContainer}
-            >
-              <LottieView
-                speed={1.7}
-                source={require('../../assets/gif/loader.json')}
-                autoPlay
-                loop
-                style={{ width: 400, height: 400 }}
+            <View style={{ flex: 1 }}>
+              <TextInput
+                value={input}
+                onChangeText={handleTextInput}
+                multiline
+                style={{
+                  color: 'white',
+                  minHeight: 100,
+                  maxHeight: keyboardOpen ? screenHeight * 0.44 : screenHeight * .6,
+                  textAlignVertical: 'top',
+                  padding: 12,
+                  borderRadius: 10,
+                  fontFamily: "Nunito-Regular",
+                  fontSize: 18,
+                }}
+                placeholder="Write any Context here to generate Questions"
+                placeholderTextColor="#999"
               />
+              <View style={{ flex: 1, justifyContent: 'flex-end' }}>
+                <View style={styles.buttonContainer}>
+                  <TouchableOpacity onPress={handleRemove}>
+                    <Text style={{ color: 'white', fontSize: 18, fontFamily: 'Nunito-Bold' }}>Clear</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={handleSubmit} style={styles.quizButton}>
+                    <MaterialIcon name="timer" color={'white'} size={22} />
+                    <Text style={{ color: 'white', fontFamily: 'Nunito-Bold' }}>Quiz</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
             </View>
-          </Modal>
-        </View>
-      </TouchableWithoutFeedback>
-    </KeyboardAvoidingView>
+          </ScrollView>
+        </KeyboardAvoidingView>
+
+        <Modal
+          isVisible={isLoading}
+          backdropOpacity={1}
+          animationIn="fadeIn"
+          animationOut="fadeOut"
+          onBackButtonPress={() => {
+             
+          navigation.goBack()
+          }}
+        >
+          <View style={styles.modalContainer}>
+            <LottieView
+              speed={1.7}
+              source={require('../../assets/gif/loader.json')}
+              autoPlay
+              loop
+              style={{ width: 400, height: 400 }}
+            />
+          </View>
+        </Modal>
+      </View>
+    </TouchableWithoutFeedback>
+
+
   )
 
 }

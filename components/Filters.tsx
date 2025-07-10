@@ -13,6 +13,7 @@ import { FilterValuesTypes } from 'screens/generateHome';
 import BottomSheet, { BottomSheetModal } from '@gorhom/bottom-sheet';
 import GorhomModal from './GorhomModal';
 import { scale, moderateScale } from 'react-native-size-matters';
+import { Ionicons } from '@expo/vector-icons';
 
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
@@ -42,8 +43,7 @@ const Filters = ({ onValueChange, defaultValues }: FiltersProps) => {
     }, []);
 
     const customData = [
-        'Filters ✻',
-        'Quiz',
+        'Filters',
         quizType,
         questionType,
         questionNumbers,
@@ -66,27 +66,66 @@ const Filters = ({ onValueChange, defaultValues }: FiltersProps) => {
                         activeOpacity={0.8}
                         onPress={handleOpen}
                     >
-                        <View
-                            style={{
-                                padding: 4,
-                                paddingHorizontal: 8,
-                                backgroundColor: 'white',
-                                borderRadius: 25,
-                                minHeight: moderateScale(30),
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                            }}
-                        >
-                            <Text
+                        {item === 'Filters' ? (
+                            <View
                                 style={{
-                                    fontFamily: 'Nunito-Medium',
-                                    color: 'black',
-                                    fontWeight: 'bold'
+                                    padding: 4,
+                                    paddingHorizontal: 8,
+                                    backgroundColor: 'white',
+                                    borderRadius: 25,
+                                    minHeight: moderateScale(30),
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
                                 }}
                             >
-                                {item}
-                            </Text>
-                        </View>
+                                <Text
+                                    style={{
+                                        fontFamily: 'Nunito-Medium',
+                                        color: 'black',
+                                        fontWeight: 'bold'
+                                    }}
+                                >
+                                    {item}
+                                </Text>
+                            </View>
+                        ) : (
+                            <View
+                                style={{
+                                    backgroundColor: '#1a1a1a',
+                                    minHeight: moderateScale(30),
+                                    padding: 4,
+                                    paddingHorizontal: 8,
+                                    borderRadius: 25,
+                                    elevation: 2,
+                                    borderColor: '#333',
+                                    borderWidth: 1,
+                                }}
+                            >
+                                <View style={{
+                                    flexDirection: 'row',
+                                    gap: 4,
+                                    alignItems: 'center',
+                                    justifyContent: 'center'
+                                }}>
+                                    <Text
+                                        style={{
+                                            fontFamily: 'Nunito-Medium',
+                                            color: 'white',
+                                            fontWeight: 'bold'
+                                        }}
+                                    >
+                                        {item}
+                                    </Text>
+                                    <Ionicons
+                                        color={'white'}
+                                        size={24}
+                                        name='close-circle'
+
+                                    />
+                                </View>
+                            </View>
+                        )}
+
                     </TouchableOpacity>
                 )}
                 horizontal

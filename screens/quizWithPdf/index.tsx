@@ -7,6 +7,8 @@ import axios from 'axios';
 import { generateQuizes } from 'utils/generateQuiz';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { GenerateNavigationType } from 'utils/types';
+import LottieView from 'lottie-react-native';
+import Modal from 'react-native-modal'
 
 type ResponseType = {
   numPages: number;
@@ -17,6 +19,7 @@ type ResponseType = {
 
 const QuizWithPdf = () => {
   const [selectedFile, setSelectedFile] = useState<DocumentPickerResult | null>(null);
+  const [modalVisible, setModalVisible] = useState(false)
   const navigation = useNavigation<NavigationProp<GenerateNavigationType>>()
 
   const handleSelectPdf = async () => {
@@ -36,27 +39,34 @@ const QuizWithPdf = () => {
   };
 
   const handleStartQuiz = async () => {
-    const formData = new FormData()
-    if (selectedFile && selectedFile.assets) {
-      formData.append('pdf', {
-        uri: selectedFile.assets[0].uri,
-        name: selectedFile.assets[0].name,
-        type: 'application/pdf',
-      } as any)
-    }
-
-    const textData = await axios.post('https://quizkrbackend.onrender.com/user/upload', formData, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'multipart/form-data'
+    try {
+      setModalVisible(true)
+      const formData = new FormData()
+      if (selectedFile && selectedFile.assets) {
+        formData.append('pdf', {
+          uri: selectedFile.assets[0].uri,
+          name: selectedFile.assets[0].name,
+          type: 'application/pdf',
+        } as any)
       }
-    })
 
-    const result = await generateQuizes({ input: textData.data.data.text })
-    if (result) {
-      navigation.navigate('QuizPage', { data: result });
+      const textData = await axios.post('https://quizkrbackend.onrender.com/user/upload', formData, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      })
+
+      const result = await generateQuizes({ input: textData.data.data.text })
+      if (result) {
+        navigation.navigate('QuizPage', { data: result });
+      }
+    } catch (error) {
+      console.log('error', error)
+    } finally {
+      setModalVisible(false)
     }
-    // console.log("this is form api result", textData.data.data.text);
+
   };
 
   return (
@@ -101,6 +111,36 @@ const QuizWithPdf = () => {
           </View>
         </View>
       )}
+
+
+      <Modal
+        isVisible={modalVisible}
+        onBackButtonPress={() => {
+          setModalVisible(prev => !prev)
+          navigation.goBack()
+        }}
+        backdropOpacity={1}
+        animationIn={'fadeIn'}
+        animationOut={'fadeOut'}
+        style={{
+          backgroundColor: 'black',
+          flex: 1,
+          padding: 0,
+          margin: 0,
+          width: "100%"
+        }}
+      >
+        <View style={styles.modalContainer}
+        >
+          <LottieView
+            speed={1.7}
+            source={require('../../assets/gif/loader.json')}
+            autoPlay
+            loop
+            style={{ width: 400, height: 400 }}
+          />
+        </View>
+      </Modal>
 
     </View>
   );
@@ -180,5 +220,10 @@ const styles = StyleSheet.create({
 
     // ✅ Shadow (Android)
     elevation: 10,
-  }
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });

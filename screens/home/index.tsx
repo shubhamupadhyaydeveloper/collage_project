@@ -21,22 +21,26 @@ import { account } from 'utils/appwrite';
 const mockData = [
   {
     title: 'Upload PDFs',
-    background: '#252A34',
+    background: '#D9F5F8',
+    textColor: '#5BCAD8',
     description: 'Import PDFs and convert them into interactive quizzes instantly with smart extraction.'
   },
   {
     title: 'Capture Notes',
-    background: '#252A34',
+    textColor: '#79D161',
+    background: '#DDF4C9',
     description: 'Snap pictures of notes and let AI generate practice questions from the content.'
   },
   {
     title: 'Manual Input',
-    background: '#252A34',
+    textColor: '#F2A85D',
+    background: '#FCE7CF',
     description: 'Enter text manually to create topic-specific quizzes powered by AI.'
   },
   {
     title: 'Smart Quiz Generator',
-    background: '#252A34',
+    textColor: '#7362DF',
+    background: '#D1CFFB',
     description: 'Automatically generate high-quality quizzes based on your study material.'
   }
 ];
@@ -127,11 +131,12 @@ const HomeScreen = () => {
     bg: string;
     description: string;
     index: number;
+    textColor : string
   };
 
   const RenderBox = useMemo(
     () =>
-      ({ text, bg, description, index }: RenderBoxProps) => {
+      ({ text, bg, description, index,textColor }: RenderBoxProps) => {
         const translateY = useSharedValue(20);
 
         useEffect(() => {
@@ -147,10 +152,10 @@ const HomeScreen = () => {
 
         return (
           <Animated.View
-            style={[styles.boxContainer, renderBoxAnimatedStyle,]}
+            style={[styles.boxContainer, renderBoxAnimatedStyle, { backgroundColor: bg }]}
           >
             <View>
-              <Text style={styles.boxTitle}>{text}</Text>
+              <Text style={[styles.boxTitle,{color:textColor}]}>{text}</Text>
               <Text style={styles.boxDescription}>{description}</Text>
             </View>
           </Animated.View>
@@ -174,6 +179,7 @@ const HomeScreen = () => {
             description={item.description}
             bg={item.background}
             text={item.title}
+            textColor={item.textColor}
           />
         )}
         ItemSeparatorComponent={() => <View style={{ height: 20 }} />}
@@ -222,7 +228,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Nunito-Regular',
   },
   boxContainer: {
-    backgroundColor: '#1A1A1A',
     borderRadius: 12,
     borderWidth: 1,
     borderColor: '#333',
@@ -241,7 +246,7 @@ const styles = StyleSheet.create({
     lineHeight: 26,
   },
   boxDescription: {
-    color: '#999999',
+    color: 'black',
     fontSize: 14,
     fontFamily: 'Nunito-Medium',
     marginTop: 10,

@@ -72,11 +72,13 @@ const QuizResultScreen = () => {
                     value={input}
                     onChangeText={setInput}
                     placeholder="Enter title here"
+                    placeholderTextColor={'black'}
                     style={{
                         borderColor: "#999999",
                         borderWidth: 1,
                         borderRadius: 8,
-                        paddingHorizontal: 10
+                        paddingHorizontal: 10,
+                        color : "black"
                     }}
                 />
 

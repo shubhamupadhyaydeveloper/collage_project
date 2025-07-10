@@ -13,7 +13,7 @@ const gemini = new GoogleGenerativeAI(GEMINI_KEY)
 
 async function getGeminiResponse(prompt: string) {
   try {
-    const model = gemini.getGenerativeModel({ model: 'gemini-1.5-flash' })
+    const model = gemini.getGenerativeModel({ model: 'gemini-2.5-flash' })
     const result = await model.generateContent(prompt)
     const response = result.response.text()
     return response

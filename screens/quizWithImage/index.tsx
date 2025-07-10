@@ -265,7 +265,6 @@ const QuizWithImage = () => {
       </View>
 
       <Modal
-        onBackdropPress={() => setModalVisible(prev => !prev)}
         isVisible={modalVisible}
         onBackButtonPress={() => setModalVisible(prev => !prev)}
         backdropOpacity={0.6}
@@ -307,7 +306,10 @@ const QuizWithImage = () => {
 
       <Modal
         isVisible={loading}
-        onBackdropPress={() => setLoading(prev => !prev)}
+        onBackButtonPress={() => {
+          setLoading(prev => !prev)
+          navigation.goBack()
+        }}
         backdropOpacity={1}
         animationIn={'fadeIn'}
         animationOut={'fadeOut'}

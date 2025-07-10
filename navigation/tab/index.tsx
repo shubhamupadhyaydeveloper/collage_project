@@ -1,24 +1,18 @@
 import { BottomTabBarButtonProps, createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { StackScreenProps } from '@react-navigation/stack';
-
-import { HeaderButton } from '../../components/HeaderButton';
-import { TabBarIcon } from '../../components/TabBarIcon';
-import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { BottomTabNavigationType } from 'utils/types';
 import { Colors } from 'utils/constants';
 import { horizontalScale, iosDevice, verticalScale } from 'utils/responsive';
 import GenerateScreen from 'screens/generate';
 import HomeScreen from 'screens/home';
-import ProfilePage from 'screens/profile';
-import CustomTabBar from './components/CustomTabBar';
 import BrainIcon from '../../assets/raw-svg/brain.svg'
 import SavedIcon from '../../assets/raw-svg/star.svg'
 import HomeFillIcon from '../../assets/raw-svg/home.svg'
 import StarIcon from '../../assets/raw-svg/star-solid.svg'
-import { Pressable } from 'react-native';
+import { Pressable, StyleSheet } from 'react-native';
 import ProfileStack from 'screens/profileHome';
 import SavedScreen from 'screens/saved';
 import { moderateScale } from 'react-native-size-matters';
+import { BlurView } from 'expo-blur'
 
 const Tab = createBottomTabNavigator<BottomTabNavigationType>();
 export default function TabLayout() {
@@ -42,7 +36,7 @@ export default function TabLayout() {
 
     return (
         <Tab.Navigator
-            
+
             screenOptions={{
                 headerShown: false,
                 lazy: true,
@@ -50,6 +44,7 @@ export default function TabLayout() {
                 tabBarInactiveTintColor: '#999999',
                 tabBarActiveTintColor: '#ffffff',
                 tabBarStyle: {
+                    ...StyleSheet.absoluteFillObject,
                     // height: iosDevice ? verticalScale(80) : verticalScale(95),
                     backgroundColor: Colors.lightText,
                     paddingTop: verticalScale(10),
@@ -67,8 +62,9 @@ export default function TabLayout() {
                     fontFamily: 'Nunito-Medium',
                     // marginTop: verticalScale(2),
                 },
-                tabBarPosition : "bottom"
-                
+                tabBarPosition: "bottom",
+
+
             }}
         >
             <Tab.Screen
