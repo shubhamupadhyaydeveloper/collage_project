@@ -80,7 +80,7 @@ const SavedScreen = () => {
       });
     } catch (err) {
       Alert.alert('Error', 'PDF generation threw an error.');
-      console.log('pdf generation error',err)
+      console.log('pdf generation error', err)
     }
   };
 
@@ -142,27 +142,31 @@ const SavedScreen = () => {
   };
 
 
+  if (isLoading) (
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <ActivityIndicator color={'white'} size={'large'} />
+    </View>
+  )
+
+
+
   return (
     <View style={{ flex: 1, backgroundColor: '#000000', paddingTop: insets.top }}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Saved Quizes</Text>
       </View>
 
-      {isLoading && (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <ActivityIndicator color={'white'} size={'large'} />
-        </View>
-      )}
-
-      {quizData.length === 0 && !isLoading && (
+      {quizData.length === 0 && !isLoading ? (
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
           <Text style={{ color: 'white', fontFamily: 'Nunito-Bold', fontSize: 18 }}>No Saved Quizes</Text>
         </View>
+      ) : (
+        <View>
+          {quizData.map((item, index) => (
+            <RenderQuiz key={index} quiz={item} />
+          ))}
+        </View>
       )}
-
-      {quizData.map((item, index) => (
-        <RenderQuiz key={index} quiz={item} />
-      ))}
     </View>
   );
 };

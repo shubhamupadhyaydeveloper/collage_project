@@ -10,13 +10,14 @@ import Animated, {
   withTiming
 } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { DrawerActions, useNavigation } from '@react-navigation/native';
+import { DrawerActions, NavigationProp, useNavigation } from '@react-navigation/native';
 import { useScrollContext } from 'context/scrollContext';
 import { horizontalScale, verticalScale } from '../../utils/responsive';
 import Octicons from 'react-native-vector-icons/Octicons';
 import FeatherIcon from 'react-native-vector-icons/Feather'
 import { Models } from 'appwrite';
 import { account } from 'utils/appwrite';
+import { BottomTabNavigationType } from 'utils/types';
 
 const mockData = [
   {
@@ -45,25 +46,31 @@ const mockData = [
   }
 ];
 
-const QuickActionButton = ({ label, icon }: { label: string; icon: JSX.Element }) => (
-  <TouchableOpacity
-    style={{
-      backgroundColor: '#1A1A1A',
-      borderRadius: 12,
-      borderWidth: 1,
-      borderColor: '#333',
-      paddingVertical: 10,
-      paddingHorizontal: 15,
+const QuickActionButton = ({ label, icon }: { label: string; icon: JSX.Element }) => {
+  const navigation = useNavigation<NavigationProp<BottomTabNavigationType,'Home'>>();
+  return (
 
-      marginRight: 10,
-      flexDirection: 'row',
-      alignItems: 'center',
-    }}
-  >
-    {icon}
-    <Text style={{ color: '#999', marginLeft: 8, fontFamily: 'Nunito-Medium' }}>{label}</Text>
-  </TouchableOpacity>
-);
+    <TouchableOpacity
+      onPress={() => navigation.navigate('Generate', { screen: 'GenerateHome' })}
+      style={{
+        backgroundColor: '#1A1A1A',
+        borderRadius: 12,
+        borderWidth: 1,
+        borderColor: '#333',
+        paddingVertical: 10,
+        paddingHorizontal: 15,
+
+        marginRight: 10,
+        flexDirection: 'row',
+        alignItems: 'center',
+      }}
+    >
+      {icon}
+      <Text style={{ color: '#999', marginLeft: 8, fontFamily: 'Nunito-Medium' }}>{label}</Text>
+    </TouchableOpacity>
+  )
+}
+
 
 const QuickActions = () => (
   <View style={{ marginBottom: 30 }}>
@@ -131,12 +138,12 @@ const HomeScreen = () => {
     bg: string;
     description: string;
     index: number;
-    textColor : string
+    textColor: string
   };
 
   const RenderBox = useMemo(
     () =>
-      ({ text, bg, description, index,textColor }: RenderBoxProps) => {
+      ({ text, bg, description, index, textColor }: RenderBoxProps) => {
         const translateY = useSharedValue(20);
 
         useEffect(() => {
@@ -155,7 +162,7 @@ const HomeScreen = () => {
             style={[styles.boxContainer, renderBoxAnimatedStyle, { backgroundColor: bg }]}
           >
             <View>
-              <Text style={[styles.boxTitle,{color:textColor}]}>{text}</Text>
+              <Text style={[styles.boxTitle, { color: textColor }]}>{text}</Text>
               <Text style={styles.boxDescription}>{description}</Text>
             </View>
           </Animated.View>

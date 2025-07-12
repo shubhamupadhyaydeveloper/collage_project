@@ -8,11 +8,12 @@ import QuizWithImage from '../quizWithImage';
 import QuizWithPdf from '../quizWithPdf';
 import GoBack from '../../components/GoBack';
 import Filters from '../../components/Filters';
+import QuizWithAudio from 'screens/quizWithAudio';
 
 export type FilterValuesTypes = {
     noOfQuestions: string;
     difficulty: string;
-    type: "Text" | "Image" | "Pdf";
+    type: "Text" | "Image" | "Pdf" | 'Audio'
 }
 
 const GoogleGiminiScreen = () => {
@@ -31,6 +32,8 @@ const GoogleGiminiScreen = () => {
                 return <QuizWithImage />
             case 'Pdf':
                 return <QuizWithPdf />
+            case 'Audio':
+                return <QuizWithAudio />
         }
     }
 

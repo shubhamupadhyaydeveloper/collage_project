@@ -8,6 +8,9 @@ import GoBack from "../../components/GoBack";
 import Animated, { useSharedValue, useAnimatedStyle, withTiming, LinearTransition } from "react-native-reanimated";
 import { horizontalScale } from "../../utils/responsive";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import Tts from 'react-native-tts';
+import { MaterialIcons } from "@expo/vector-icons";
+import { moderateScale } from "react-native-size-matters";
 
 const optionHeadingColor = '#787D86'
 const optionHeadingbg = '#F2F3F5'
@@ -22,7 +25,7 @@ type DataType = {
 const QuizPageScreen = () => {
     const navigation = useNavigation<NavigationProp<GenerateNavigationType, 'QuizPage'>>()
     const route = useRoute<RouteProp<GenerateNavigationType, 'QuizPage'>>();
-    const { data : quizData } = route.params;
+    const { data: quizData } = route.params;
     const [currentQuizIndex, setCurrentQuizIndex] = useState(0);
     const [quiz, setQuiz] = useState<DataType[]>([]);
     const insets = useSafeAreaInsets()
@@ -41,6 +44,12 @@ const QuizPageScreen = () => {
     };
 
     useEffect(() => {
+        Tts.setDefaultLanguage('en-IN');
+        Tts.setDefaultRate(0.5);
+        Tts.setDefaultPitch(1.0);
+    }, []);
+
+    useEffect(() => {
         if (showResult) {
             let newScore = 0;
             Object.keys(selectedAnswers).forEach(questionIndex => {
@@ -53,6 +62,7 @@ const QuizPageScreen = () => {
             setTotalScored(newScore);
         }
     }, [showResult, selectedAnswers, quiz]);
+
 
 
     useEffect(() => {
@@ -71,7 +81,7 @@ const QuizPageScreen = () => {
         if (quiz.length - 1 === currentQuizIndex) {
             navigation.reset({
                 index: 0,
-                routes: [{ name: 'ResultPage', params: { score: totalScored, totalQuestions: quiz.length, data : quizData} }]
+                routes: [{ name: 'ResultPage', params: { score: totalScored, totalQuestions: quiz.length, data: quizData } }]
             });
         }
 
@@ -92,6 +102,10 @@ const QuizPageScreen = () => {
 
 
     const RenderOptionContainer = () => {
+        const speakText = () => {
+            const selectedOption = quiz[currentQuizIndex]?.question
+            Tts.speak(selectedOption);
+        }
         return (
             <View style={{ marginTop: 20, gap: 20, flex: 1 }}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
@@ -101,7 +115,39 @@ const QuizPageScreen = () => {
                     </View>
                     <Text style={{ color: 'white', fontFamily: 'Nunito-Bold', fontSize: 16 }}>{currentQuizIndex + 1}/{quiz.length}</Text>
                 </View>
-                <Text style={styles.headingText}>{quiz[currentQuizIndex]?.question}</Text>
+
+                <View
+                    style={{
+                        flexDirection: 'row',
+                        gap: 10,
+                        alignItems: 'center',
+                        paddingHorizontal: 0,
+                        marginVertical: 12,
+                    }}
+                >
+                    <View style={{ flex: 1 }}>
+                        <Text style={styles.headingText}>
+                            {quiz[currentQuizIndex]?.question}
+                        </Text>
+                    </View>
+
+                    <TouchableOpacity
+                        onPress={speakText}
+                    >
+                        <View
+                            style={{
+                                backgroundColor: '#1a1a1a',
+                                padding: 10,
+                                borderRadius: 20,
+                                borderColor: '#fff',
+                                borderWidth: 1,
+                            }}
+                        >
+                            <MaterialIcons color={'white'} size={24} name="record-voice-over" />
+                        </View>
+                    </TouchableOpacity>
+                </View>
+
                 <View style={{ gap: 25 }}>
                     {quiz[currentQuizIndex]?.options?.map((item: string, index: number) => {
                         const isSelected = activeIndex === index;

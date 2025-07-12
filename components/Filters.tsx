@@ -14,6 +14,7 @@ import BottomSheet, { BottomSheetModal } from '@gorhom/bottom-sheet';
 import GorhomModal from './GorhomModal';
 import { scale, moderateScale } from 'react-native-size-matters';
 import { Ionicons } from '@expo/vector-icons';
+import DropDownPicker from 'react-native-dropdown-picker'
 
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
@@ -24,7 +25,7 @@ type FiltersProps = {
 };
 
 const Filters = ({ onValueChange, defaultValues }: FiltersProps) => {
-    const [quizType, setQuizType] = useState<'Text' | 'Image' | 'Pdf'>(
+    const [quizType, setQuizType] = useState<'Text' | 'Image' | 'Pdf' | 'Audio'>(
         defaultValues.type
     );
     const [questionType, setQuestionType] = useState<string>(
@@ -35,6 +36,8 @@ const Filters = ({ onValueChange, defaultValues }: FiltersProps) => {
     );
 
     const bottomSheetRef = useRef<BottomSheetModal>(null) as React.RefObject<BottomSheetModal>;
+    const [open, setOpen] = useState(false)
+    const [value, setValue] = useState('Text')
 
 
     // Handle open
@@ -140,7 +143,8 @@ const Filters = ({ onValueChange, defaultValues }: FiltersProps) => {
 
             <GorhomModal
                 bottomSheetRef={bottomSheetRef}
-                customSnapPoints={['50%',]}
+                customSnapPoints={['50%']}
+
 
             >
                 <View
@@ -156,13 +160,38 @@ const Filters = ({ onValueChange, defaultValues }: FiltersProps) => {
                             }}>
                                 <View style={{}}>
                                     <Text style={styles.label}>Select Format</Text>
-                                    <HorizontalSlider
-                                        defaultValue={quizType}
-                                        width={moderateScale(103)}
-                                        height={moderateScale(31)}
-                                        data={['Text', 'Image', 'Pdf']}
-                                        onChange={(value: any) => setQuizType(value)}
+                                    <DropDownPicker
+                                        open={open}
+                                        value={value}
+                                        items={
+                                            [
+                                                { label: 'Text', value: 'Text' },
+                                                { label: 'Image', value: 'Image' },
+                                                { label: 'Pdf', value: 'Pdf' },
+                                                { label: 'Audio', value: 'Audio' },
+                                            ]
+                                        }
+                                        setOpen={setOpen}
+                                        setValue={(value) => {
+                                             setValue(value)
+                                             setQuizType(value)
+                                        }}
+                                        placeholder="Select format"
+                                        style={{
+                                            borderColor: '#ccc',
+                                            height: moderateScale(40),
+                                            zIndex: 1000, // needed if inside a scroll view or bottom sheet
+                                        }}
+                                        dropDownContainerStyle={{
+                                            zIndex: 1000,
+                                        }}
                                     />
+                                    {/* <HorizontalSlider
+                                        defaultValue={quizType}
+                                        height={moderateScale(31)}
+                                        data={['Text', 'Image', 'Pdf','Audio']}
+                                        onChange={(value: any) => setQuizType(value)}
+                                    /> */}
                                 </View>
 
                                 <View style={{}}>
@@ -170,7 +199,6 @@ const Filters = ({ onValueChange, defaultValues }: FiltersProps) => {
                                     <HorizontalSlider
                                         defaultValue={questionType}
                                         height={moderateScale(31)}
-                                        width={moderateScale(103)}
                                         data={['Hard 🔥', 'Medium 💪', 'Easy 😄']}
                                         onChange={setQuestionType}
                                     />
@@ -181,7 +209,6 @@ const Filters = ({ onValueChange, defaultValues }: FiltersProps) => {
                                     <HorizontalSlider
                                         defaultValue={questionNumbers}
                                         height={moderateScale(31)}
-                                        width={moderateScale(103)}
                                         data={['Below 5', 'Only 5', 'Above 5']}
                                         onChange={setQuestionNumbers}
                                     />

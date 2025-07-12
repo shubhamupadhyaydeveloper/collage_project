@@ -52,18 +52,18 @@ const QuizWithImage = () => {
         type: 'image/jpeg',
       } as any);
 
-      const textData = await axios.post('https://quizkrbackend.onrender.com/user/ocr', formData, {
+       const textData = await axios.post('https://developershubham-audio-transcribe.hf.space/extract-text-from-image', formData, {
         method: 'POST',
         headers: {
           'Content-Type': 'multipart/form-data'
         }
       })
-      setProcessedText(textData.data.data)
+      setProcessedText(textData.data.text)
       if (showModal) {
         setModalVisible(true)
       }
 
-      return textData.data.data
+      return textData.data.text
     } catch (error) {
       console.log('error', error)
     } finally {

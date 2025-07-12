@@ -41,23 +41,25 @@ const QuizWithPdf = () => {
   const handleStartQuiz = async () => {
     try {
       setModalVisible(true)
-      const formData = new FormData()
+      const formData = new FormData();
+
       if (selectedFile && selectedFile.assets) {
-        formData.append('pdf', {
+        formData.append('file', {
           uri: selectedFile.assets[0].uri,
           name: selectedFile.assets[0].name,
           type: 'application/pdf',
         } as any)
       }
 
-      const textData = await axios.post('https://quizkrbackend.onrender.com/user/upload', formData, {
+      const textData = await axios.post('https://developershubham-audio-transcribe.hf.space/extract-text-from-pdf', formData, {
         method: 'POST',
         headers: {
           'Content-Type': 'multipart/form-data'
         }
       })
 
-      const result = await generateQuizes({ input: textData.data.data.text })
+      const result = await generateQuizes({ input: textData.data.text })
+
       if (result) {
         navigation.navigate('QuizPage', { data: result });
       }
@@ -66,7 +68,6 @@ const QuizWithPdf = () => {
     } finally {
       setModalVisible(false)
     }
-
   };
 
   return (

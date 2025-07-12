@@ -40,6 +40,8 @@ const QuizWithText = () => {
   const insets = useSafeAreaInsets();
   const [keyboardOpen, setKeyboardOpen] = useState(false);
 
+  
+
   useEffect(() => {
     const showSubscription = Keyboard.addListener(
       Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow',
@@ -61,6 +63,7 @@ const QuizWithText = () => {
     };
   }, []);
 
+  
 
   // useEffect(() => {
   //   const getInput = mmkvStorage.getItem('textinput');
@@ -117,6 +120,13 @@ const QuizWithText = () => {
             showsVerticalScrollIndicator={false}
           >
             <View style={{ flex: 1 }}>
+              <TouchableOpacity
+              
+              >
+                <View>
+                  <Text>Start Recording</Text>
+                </View>
+              </TouchableOpacity>
               <TextInput
                 value={input}
                 onChangeText={handleTextInput}
@@ -155,8 +165,8 @@ const QuizWithText = () => {
           animationIn="fadeIn"
           animationOut="fadeOut"
           onBackButtonPress={() => {
-             
-          navigation.goBack()
+
+            navigation.goBack()
           }}
         >
           <View style={styles.modalContainer}>
