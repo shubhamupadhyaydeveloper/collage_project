@@ -4,11 +4,10 @@ import { CameraPermissionResponse, CameraType, launchCameraAsync, launchImageLib
 
 import Modal from 'react-native-modal'
 import { horizontalScale, verticalScale } from '../../utils/responsive';
-import AntDesignIcon from 'react-native-vector-icons/AntDesign'
+import { AntDesign } from '@expo/vector-icons';
 import * as Clipboard from 'expo-clipboard';
 
-import MaterialIcon from 'react-native-vector-icons/MaterialIcons'
-import IcoIcons from 'react-native-vector-icons/Ionicons'
+import { MaterialIcons , Ionicons} from '@expo/vector-icons';
 import { moderateScale } from 'react-native-size-matters';
 import axios from 'axios';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
@@ -194,7 +193,7 @@ const QuizWithImage = () => {
                 alignItems: 'center',
               }]}>
               <View >
-                <IcoIcons name='trash-sharp' size={20} color={'white'} />
+                <Ionicons name='trash-sharp' size={20} color={'white'} />
               </View>
             </TouchableOpacity>
             <Image
@@ -257,7 +256,7 @@ const QuizWithImage = () => {
           <View />
           <View style={[styles.buttonContainer]}>
             <TouchableOpacity onPress={handleGenerateQuiz} style={styles.quizButton}>
-              <MaterialIcon name='timer' color={'white'} size={22} />
+              <MaterialIcons name='timer' color={'white'} size={22} />
               <Text style={{ color: 'white', fontWeight: 'bold' }}>Quiz</Text>
             </TouchableOpacity>
           </View>
@@ -276,7 +275,7 @@ const QuizWithImage = () => {
 
             <TouchableOpacity activeOpacity={.8} onPress={() => setModalVisible(prev => !prev)}>
               <View style={styles.container}>
-                <AntDesignIcon name='close' size={20} color={'black'} />
+                <AntDesign name='close' size={20} color={'black'} />
               </View>
             </TouchableOpacity>
 

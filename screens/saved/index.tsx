@@ -5,7 +5,7 @@ import { Animated, Pressable } from 'react-native';
 import { GestureHandlerRootView, TextInput } from 'react-native-gesture-handler';
 import { account, databases } from 'utils/appwrite';
 import { APPWRITE_COLLECTION_ID, APPWRITE_DATABASE_ID } from '@env';
-import Entypo from 'react-native-vector-icons/Entypo'
+import { Entypo } from '@expo/vector-icons';
 import {
   Menu,
   MenuOptions,

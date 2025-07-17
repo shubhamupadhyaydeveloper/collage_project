@@ -8,7 +8,7 @@ import { account } from 'utils/appwrite';
 import { resetAndNavigate } from 'utils/navigation';
 import { Models } from 'appwrite';
 import { toast } from 'burnt';
-import FeatherIcon from 'react-native-vector-icons/Feather'
+import { Feather } from '@expo/vector-icons';
 import * as WebBrowser from 'expo-web-browser';
 
 type BoxProps = {
@@ -49,7 +49,7 @@ const ProfilePage = () => {
           <Text style={styles.title}>{title}</Text>
           <Text style={styles.description}>{description}</Text>
         </View>
-        <FeatherIcon name="chevron-right" size={22} color="#aaa" />
+        <Feather name="chevron-right" size={22} color="#aaa" />
       </TouchableOpacity>
     );
   };
@@ -79,21 +79,21 @@ const ProfilePage = () => {
 
         <InfoBox
           description='shubhamwork48@gmail.com'
-          icon={<FeatherIcon name="mail" size={22} color="#fff" />}
+          icon={<Feather name="mail" size={22} color="#fff" />}
           onPress={openEmail}
           title='Contact Support'
         />
 
         <InfoBox
           description='Read our terms and privacy policy'
-          icon={<FeatherIcon name="file" size={22} color="#fff" />}
+          icon={<Feather name="file" size={22} color="#fff" />}
           onPress={openBrowser}
           title='Terms & privacy Policy'
         />
 
         <InfoBox
           description='shubham upadhyay '
-          icon={<FeatherIcon name="linkedin" size={22} color="#fff" />}
+          icon={<Feather name="linkedin" size={22} color="#fff" />}
           onPress={() => {
             Linking.openURL('https://www.linkedin.com/in/shubhamupadhyaydeveloper/')
           }}
@@ -102,7 +102,7 @@ const ProfilePage = () => {
 
         <InfoBox
           description='change Password'
-          icon={<FeatherIcon name="lock" size={22} color="#fff" />}
+          icon={<Feather name="lock" size={22} color="#fff" />}
           onPress={() => { 
              navigation.navigate('ForgetPassword')
           }}

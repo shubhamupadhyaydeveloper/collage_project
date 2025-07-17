@@ -2,7 +2,7 @@ import { StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-nativ
 import React from 'react'
 import GoBack from 'components/GoBack';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import FeatherIcon from 'react-native-vector-icons/Feather'
+import { Feather } from '@expo/vector-icons';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { FieldValues, useForm } from 'react-hook-form';
 import CustomInput from 'components/CustomTextInput';
@@ -45,7 +45,7 @@ const ForgetPasswordScreen = () => {
             <StatusBar barStyle={'light-content'} backgroundColor={'#222'} />
             <View style={{ flexDirection: 'row', gap: 10, alignItems: 'center', backgroundColor: '#222', paddingTop: insets.top + 15, paddingBottom: 10 }}>
                 <TouchableOpacity style={{ marginLeft: 15 }} onPress={() => navigation.goBack()}>
-                    <FeatherIcon name='arrow-left' color={'white'} size={24} />
+                    <Feather name='arrow-left' color={'white'} size={24} />
                 </TouchableOpacity>
                 <View style={{ width: "75%" }}>
                     <Text style={{ fontSize: 20, color: 'white', fontFamily: "Nunito-Bold", textAlign: 'center' }}>Forget Password</Text>

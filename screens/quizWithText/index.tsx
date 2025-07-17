@@ -22,7 +22,7 @@ import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { GenerateNavigationType } from '../../utils/types';
 import LottieView from 'lottie-react-native';
 
-import MaterialIcon from 'react-native-vector-icons/MaterialIcons'
+import { MaterialIcons } from '@expo/vector-icons';
 import Modal from 'react-native-modal'
 import { jsonrepair } from "jsonrepair";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -150,7 +150,7 @@ const QuizWithText = () => {
                     <Text style={{ color: 'white', fontSize: 18, fontFamily: 'Nunito-Bold' }}>Clear</Text>
                   </TouchableOpacity>
                   <TouchableOpacity onPress={handleSubmit} style={styles.quizButton}>
-                    <MaterialIcon name="timer" color={'white'} size={22} />
+                    <MaterialIcons name="timer" color={'white'} size={22} />
                     <Text style={{ color: 'white', fontFamily: 'Nunito-Bold' }}>Quiz</Text>
                   </TouchableOpacity>
                 </View>

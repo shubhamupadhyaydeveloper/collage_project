@@ -1,6 +1,6 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
-import AntDesignIcon from 'react-native-vector-icons/AntDesign'
+import { AntDesign } from '@expo/vector-icons'
 import { useNavigation } from '@react-navigation/native'
 
 const GoBack = ({changeIcon}:{changeIcon?:boolean}) => {
@@ -8,7 +8,7 @@ const GoBack = ({changeIcon}:{changeIcon?:boolean}) => {
     return (
         <TouchableOpacity style={styles.container} activeOpacity={.8} onPress={() => navigation.goBack()}>
             <View>
-                <AntDesignIcon name={changeIcon ? 'arrowleft' : 'close' } size={20} color={'black'} />
+                <AntDesign name={changeIcon ? 'arrowleft' : 'close' } size={20} color={'black'} />
             </View>
         </TouchableOpacity> 
     ) 

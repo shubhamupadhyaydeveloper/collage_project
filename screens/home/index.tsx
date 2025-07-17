@@ -13,8 +13,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { DrawerActions, NavigationProp, useNavigation } from '@react-navigation/native';
 import { useScrollContext } from 'context/scrollContext';
 import { horizontalScale, verticalScale } from '../../utils/responsive';
-import Octicons from 'react-native-vector-icons/Octicons';
-import FeatherIcon from 'react-native-vector-icons/Feather'
+import { Octicons } from '@expo/vector-icons';
+import { Feather } from '@expo/vector-icons';
 import { Models } from 'appwrite';
 import { account } from 'utils/appwrite';
 import { BottomTabNavigationType } from 'utils/types';
@@ -104,7 +104,7 @@ const CommonHeader = ({ userDetail }: { userDetail: Models.User<Models.Preferenc
         </View>
         <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
           <View style={{ padding: 8, backgroundColor: '#fff', borderRadius: 50 }}>
-            <FeatherIcon name="user" size={24} color="#000" />
+            <Feather name="user" size={24} color="#000" />
           </View>
         </TouchableOpacity>
       </View>

@@ -4,8 +4,7 @@ import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { CommonActions, NavigationProp, useNavigation } from '@react-navigation/native';
 
-import AntIcon from 'react-native-vector-icons/AntDesign'
-import EntypoIcon from 'react-native-vector-icons/Entypo'
+import { Entypo } from '@expo/vector-icons';
 import { Colors, signupImage } from '../../utils/constants';
 import CustomInput from '../../components/CustomTextInput';
 import { AuthStackNavigationType } from '../../utils/types';
@@ -46,7 +45,10 @@ const AuthSignUpScreen = () => {
     try {
       const user = await account.create(ID.unique(), value.email, value.password, value.name)
 
+      await account.deleteSession('current');
+
       navigation.navigate('Login')
+
     } catch (error: any) {
       return { success: false, message: error.message || 'Signup failed' };
     } finally {
@@ -66,7 +68,7 @@ const AuthSignUpScreen = () => {
             contentContainerStyle={{ flexGrow: 1 }}
             keyboardShouldPersistTaps="handled">
             <Animated.View style={[{ flex: 1, paddingHorizontal: 20, gap: 20 }, translateStyle]}>
-              <View style={{ gap: 20}}>
+              <View style={{ gap: 20 }}>
                 <Image source={signupImage} style={{ width: "100%", height: 250 }} />
 
                 <View>
@@ -81,7 +83,7 @@ const AuthSignUpScreen = () => {
                 </View>
               </View>
 
-              <View style={{flex : 1 ,justifyContent : 'flex-end',gap : 10}}>
+              <View style={{ flex: 1, justifyContent: 'flex-end', gap: 10 }}>
                 <View
                   style={{
                     flexDirection: 'row',
@@ -105,7 +107,7 @@ const AuthSignUpScreen = () => {
                         marginTop: 2, // Align better with multi-line text
                       }}
                     >
-                      {policyAgree && <EntypoIcon name="check" size={14} color="white" />}
+                      {policyAgree && <Entypo name="check" size={14} color="white" />}
                     </View>
                   </TouchableOpacity>
 

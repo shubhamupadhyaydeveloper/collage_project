@@ -2,7 +2,7 @@ import { Button, ScrollView, StyleSheet, Text, View, TouchableOpacity } from 're
 import React, { useState } from 'react';
 import { getDocumentAsync, DocumentPickerResult } from 'expo-document-picker';
 import { Ionicons } from '@expo/vector-icons';
-import MaterialIcon from 'react-native-vector-icons/MaterialIcons'
+import { MaterialIcons } from '@expo/vector-icons';
 import axios from 'axios';
 import { generateQuizes } from 'utils/generateQuiz';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
@@ -106,7 +106,7 @@ const QuizWithPdf = () => {
           <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
             <View />
             <TouchableOpacity onPress={handleStartQuiz} style={styles.quizButton}>
-              <MaterialIcon name='timer' color={'white'} size={22} />
+              <MaterialIcons name='timer' color={'white'} size={22} />
               <Text style={{ color: 'white', fontWeight: 'bold', fontFamily: 'Nunito-Bold' }}>Quiz</Text>
             </TouchableOpacity>
           </View>

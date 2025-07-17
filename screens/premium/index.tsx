@@ -5,7 +5,7 @@ import { FlatList } from 'react-native-gesture-handler';
 import { horizontalScale } from '../../utils/responsive';
 import GoBack from '../../components/GoBack';
 import { Colors } from '../../utils/constants';
-import AntDesignIcon from 'react-native-vector-icons/AntDesign'
+import { AntDesign } from '@expo/vector-icons';
 import HorizontalSlider from '../../components/HorizontalSlider';
 
 type MockDataType = {
@@ -54,7 +54,7 @@ const PremiumScreen = () => {
                 {item.features.map((feature, index) => (
                     <View key={index} style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 5 }}>
                         <View style={{ width: 30, height: 30, borderRadius: 15, backgroundColor: isFirst ? Colors.primary : 'black', justifyContent: 'center', alignItems: 'center', marginRight: 10 }}>
-                            <AntDesignIcon name="check" size={12} color={isFirst ? '#E0F7FF' : 'white'} />
+                            <AntDesign name="check" size={12} color={isFirst ? '#E0F7FF' : 'white'} />
                         </View>
                         <Text key={index} style={{ color: '#555', fontSize: 14, fontFamily: 'Nunito-Bold' }}>{feature}</Text>
                     </View>
@@ -78,7 +78,7 @@ const PremiumScreen = () => {
                 <Text style={{ color: Colors.primary, fontSize: 21, fontWeight: 'bold' }}>Subscriptions</Text>
                 <View style={{ padding: 15, backgroundColor: '#fafafa', borderRadius: 12, marginTop: 10 }}>
                     <View style={{ backgroundColor: '#f2f2f2', width: 40, height: 40, borderRadius: 20, justifyContent: 'center', alignItems: 'center' }}>
-                        <AntDesignIcon name='user' color={'black'} size={24} />
+                        <AntDesign name='user' color={'black'} size={24} />
                     </View>
 
                     <View>
@@ -110,14 +110,14 @@ const PremiumScreen = () => {
             <View style={{ gap: 20 }}>
                 <TouchableOpacity activeOpacity={.8}>
                     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-                        <AntDesignIcon name="lock" color="#f2f2f2" size={24} />
+                        <AntDesign name="lock" color="#f2f2f2" size={24} />
                         <Text style={{ color: '#f2f2f2', fontSize: 16 }}>Privacy Policy</Text>
                     </View>
                 </TouchableOpacity>
 
                 <TouchableOpacity activeOpacity={.8}>
                     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-                        <AntDesignIcon name="infocirlceo" color="#f2f2f2" size={22} />
+                        <AntDesign name="infocirlceo" color="#f2f2f2" size={22} />
                         <Text style={{ color: '#f2f2f2', fontSize: 16 }}>Terms & Conditions</Text>
                     </View>
                 </TouchableOpacity>
